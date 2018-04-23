@@ -25,6 +25,7 @@ module.exports = {
     'generator-star-spacing': 'off',
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'vetur.validation.template': false
+    'vetur.validation.template': false,
+    "no-extra-semi": 'off'
   }
 }
