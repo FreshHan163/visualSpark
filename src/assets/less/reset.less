@@ -53,14 +53,13 @@ table {
 html {
     overflow-y: scroll;
 }
-.clearfix:before,
-.clearfix:after {
-    content: " ";
-    display: inline-block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-}
 .clearfix {
-    *zoom: 1;
+    zoom: 1;
+}
+.clearfix:after {
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+  content: ".";
 }

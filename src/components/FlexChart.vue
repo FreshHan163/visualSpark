@@ -33,22 +33,30 @@ html,body {
     justify-content: space-between;
     color: white;
     font-weight: 700;
-  margin-bottom: 10px;
-    .gauge-wrap {
-      // border: 1px solid red;
-      margin: 0 auto;
-      flex: 1;
-    }
-    .line-wrap {
-      flex: 1 0 50%;
-      margin: 0 auto;
-      // box-shadow: 1px 2px 10px 5px inset rgba(79,133,187, 0.5),
-      //             -1px -2px 10px 5px inset rgba(79,133,187, 0.5);
-      box-shadow: 0 0 6px 4px inset hsla(210, 100%, 63%, 0.5);
-      // box-shadow: rgba(0, 100, 0, 0.05) 0px 0px 1px, rgba(0, 100, 0, 0.05) 3px 3px 3px, rgba(0, 100, 0, 0.05) 8px 9px 6px, rgba(0, 100, 0, 0.05) 16px 17px 10px, rgba(0, 100, 0, 0.05) 27px 29px 15px, rgba(0, 100, 0, 0.05) 42px 44px 21px;
+    margin-bottom: 10px;
+    .macro-page {
+      .gauge-wrap {
+        // border: 1px solid red;
+        // margin: 0 auto;
+        flex: 1;
+        .gauge-chart {
+          margin: 0 auto;
+        }
+      }
+      .line-wrap {
+        flex: 1 0 50%;
+        margin: 0 150px;
+        // box-shadow: 1px 2px 10px 5px inset rgba(79,133,187, 0.5),
+        //             -1px -2px 10px 5px inset rgba(79,133,187, 0.5);
+        box-shadow: 0 0 6px 4px inset hsla(210, 100%, 63%, 0.5);
+        // box-shadow: rgba(0, 100, 0, 0.05) 0px 0px 1px, rgba(0, 100, 0, 0.05) 3px 3px 3px, rgba(0, 100, 0, 0.05) 8px 9px 6px, rgba(0, 100, 0, 0.05) 16px 17px 10px, rgba(0, 100, 0, 0.05) 27px 29px 15px, rgba(0, 100, 0, 0.05) 42px 44px 21px;
 
-      border-radius: 5px;
-      // border: 1px solid green;
+        border-radius: 5px;
+        // border: 1px solid green;
+        .line-chart {
+          margin: 0 auto;
+        }
+      }
     }
   }
 }
@@ -61,15 +69,22 @@ html,body {
       </div>
     </header>
     <div class="common-container">
-      <div class="gauge-wrap">
-        <div id="gaugeChart" class="gaugeChart" style="width: 500px; height: 400px;">
-          这里是导航盘图表
+      <div class="macro-page" v-if="!isShowDetail">
+        <div class="gauge-wrap">
+          <div id="gaugeChart" class="gauge-chart" style="width: 500px; height: 400px;">
+            这里是导航盘图表
+          </div>
+        </div>
+        <div class="line-wrap">
+          <div id="lineChart" class="line-chart" style="width: 1000px; height: 400px;">
+            折线图表
+          </div>
         </div>
       </div>
-      <div class="line-wrap">
-        <div id="lineChart" class="lineChart" style="width: 1000px; height: 400px;">
-          折线图表
-        </div>
+      <div class="detail-page" v-else>
+        <detail-page></detail-page>
+        <!-- 这里是展示详情的页面{{ detailData }} -->
+        <!-- <Button type="primary" @click="returnMacro">返回</Button> -->
       </div>
     </div>
   </div>
@@ -77,13 +92,17 @@ html,body {
 
 <script>
 import '../assets/less/reset.less';
+import DetailPage from './DetailPage';
+
 export default {
   name: 'HelloWorld',
   data () {
     return {
       msg: 'hello',
       isCollapsed: true,
-      sidebarTag: true
+      sidebarTag: true,
+      isShowDetail: false,
+      detailData: ''
     };
   },
   mounted () {
@@ -91,7 +110,16 @@ export default {
     // this.drawGuide();
     // this.draw3DBar();
   },
+  components: {
+    DetailPage
+  },
   methods: {
+    returnMacro () {
+      this.isShowDetail = false;
+      setTimeout( () => {
+        this.drawLine();
+      }, 0);
+    },
     drawGuide () {
       let gaugeChart = this.$echarts.init(document.getElementById('gaugeChart'));
       let gaugeOption = {
@@ -567,7 +595,6 @@ export default {
             }
         ]
       };
-
       // setInterval(function (){
       //     option.series[0].data[0].value = (Math.random()*100).toFixed(2) - 0;
       //     option.series[1].data[0].value = (Math.random()*7).toFixed(2) - 0;
@@ -599,7 +626,7 @@ export default {
 
       let lineOption = {
           title: {
-              text: '动态数据 + 时间坐标轴',
+              text: '整体流量图',
               left: 'center',
               textStyle: {
                 color: 'white',
@@ -636,16 +663,16 @@ export default {
               xAxisIndex: [0],
               start: 0,
               end: 100,
-              height: '18',
+              height: '15',
               bottom: '0%',
-              backgroundColor: 'rgba(255, 255, 0, 0.5)',
-              borderColor: 'rgba(255, 255, 0, 0.5)',
+              backgroundColor: 'hsla(210, 100%, 63%, 0.3)',
+              borderColor: 'rgba(255, 255, 255, 0.5)',
               handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-              handleSize: '80%',
+              handleSize: '70%',
               handleStyle: {
                   color: '#fff',
                   shadowBlur: 3,
-                  shadowColor: 'rgba(0, 0, 0, 0.6)',
+                  shadowColor: 'rgba(0, 0, 0, 0.5)',
                   shadowOffsetX: 2,
                   shadowOffsetY: 2
               }
@@ -686,14 +713,24 @@ export default {
           }]
       };
       lineChart.setOption(lineOption);
-      // lineChart.on('click', (params) => {
-      //   console.log(params);
-      // });
+
+      // 设置初始仪表盘的值为曲线的最后一个值
+      gaugeOption.series[0].data[0].value = data[data.length -1].value[1];
+      gaugeOption.series[1].data[0].value = data[data.length -1].value[1] / 100;
+      gaugeOption.series[2].data[0].value = data[data.length -1].value[1] / 100;
+      console.log(gaugeOption);
+      gaugeChart.setOption(gaugeOption);
+
       lineChart.on('mousemove', (params) => {
         gaugeOption.series[0].data[0].value = params.data.value[1];
         gaugeOption.series[1].data[0].value = params.data.value[1] / 100;
         gaugeOption.series[2].data[0].value = params.data.value[1] / 100;
         gaugeChart.setOption(gaugeOption);
+      });
+      lineChart.on('click', (params) => {
+        this.isShowDetail = true;
+        this.detailData = params.data.value[1];
+        // alert(params.data.value[1]);
       });
       // 下面代码实现实时的曲线刷新，每隔1s刷新一次
       // setInterval(function () {

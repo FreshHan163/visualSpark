@@ -4,6 +4,10 @@ import HelloWorld from '@/components/HelloWorld'
 import Layout from '@/components/testLayout'
 import GuideChart from '@/components/GuideChart'
 import FlexChart from '@/components/FlexChart'
+import DetailPage from '@/components/DetailPage'
+import CampusChart from '@/components/CampusChart'
+import HeatmapChart from '@/components/HeatmapChart'
+import PieChart from '@/components/PieChart'
 
 Vue.use(Router)
 
@@ -28,6 +32,26 @@ export default new Router({
       path: '/flex',
       name: 'FlexChart',
       component: FlexChart
+    },
+    {
+      path: '/detail',
+      name: 'DetailPage',
+      component: DetailPage
+    },
+    {
+      path: '/campus',
+      name: 'CampusChart',
+      component: CampusChart
+    },
+    {
+      path: '/heatmap',
+      name: 'HeatmapChart',
+      component: HeatmapChart
+    },
+    {
+      path: '/pie',
+      name: 'PieChart',
+      component: PieChart
     }
   ]
 })
