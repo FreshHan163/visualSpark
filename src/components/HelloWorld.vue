@@ -1,180 +1,170 @@
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="less">
+html,body {
+  height: 100%;
+  // overflow: hidden;
+  background: black;
+  min-height: 927px;
+}
+.layout-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .main-header {
+    height: 69px;
+    min-height: 69px;
+    box-shadow: 0 1px 1px black;
+    border-bottom: 5px solid #343436;
+    .head-wrap {
+      text-align: left;
+      padding-left: 20px;
+      line-height: 69px;
+      .head-title {
+        font-size: 30px;
+        font-weight: 700;
+        color: white;
+      }
+    }
+  }
+  .common-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    .mainChart-wrap {
+      flex: 1 0 70%;
+      background-color: #3EA0D5;
+    }
+    .subChart-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      .subChart {
+        flex: 1;
+        min-width: 300px;
+        min-height: 300px;
+        box-shadow: 1px 2px 5px blue;
+      }
+    }
+  }
+  .control-wrap {
+    position: fixed;
+    top: 69px;
+    left: 0;
+    right: 0;
+    z-index: 101;
+    // background-color: black;
+    // opacity: 0.3;
+    .control-panel {
+      float: right;
+      width: 245px;
+      margin-right: 15px;
+      .ivu-collapse {
+        background-color: black;
+        .ivu-collapse-content {
+          color: white;
+          background-color: #fff;
+        }
+        .ivu-collapse-item > .ivu-collapse-header {
+          color: white;
+        }
+      }
+    }
+  }
+}
+</style>
 <template>
   <div class="layout-wrap">
-    <div id="common-header">
-      <div data-v-4a3222c1="" class="head-wrap"></div>
-    </div>
-    <div id="common-sidebar-wrap">
-      <div id="common-sidebar"  v-if="sidebarTag">
-        这里是显示菜单筛选
+    <header class="main-header" id="main-header">
+      <div class="head-wrap">
+        <h1 class="head-title">Netflow网络数据监控可视化</h1>
+        <test-time>
+          <p slot="content">这里是测试子组件</p>
+        </test-time>
       </div>
-      <div id="common-sidebar-hide" class="sidebar-hide sidebar-hide" @click="showSidebar"><span></span></div>
-    </div>
-    <div id="common-container">
+    </header>
+    <div id="common-container" class="common-container">
       <div id="mainChart-wrap" class="mainChart-wrap">
-        显示大图表
+        这是主图表区域，高度不确定
+        <div id="myChart" class="myChart"></div>
       </div>
       <div id="subChart-wrap" class="subChart-wrap">
         <div class="subChart firstChart">
-          <div class="barChart">
+          <div class="barChart" id="barChart">
             1111图表
           </div>
         </div>
         <div class="subChart secChart">
-          <div class="lineChart">
+          <div class="lineChart" id="lineChart">
             2222图表
           </div>
         </div>
-        <div class="subChart thirdChart">
-          <div class="radiusChart">
-            3333图表
-          </div>
-        </div>
       </div>
-      <!-- <Row>
-        <Col span="16">
-          <div id="mainChart-wrap" class="mainChart-wrap">
-            显示大图表
-          </div>
-        </Col>
-        <Col span="8">
-          <div id="subChart-wrap" class="subChart-wrap">
-            <div class="subChart firstChart">
-              <div class="barChart">
-                1111图表
-              </div>
+    </div>
+    <div class="control-wrap">
+      <div class="control-panel">
+        <Collapse accordion v-model="value1">
+          <Panel name="1">
+            OpenControls
+            <div slot="content">
+              <Collapse v-model="value2">
+                <Panel name="1-1">
+                  Iphone1111
+                  <p slot="content">Iphone,是苹果公司。</p>
+                </Panel>
+                <Panel name="1-2">
+                  Iphone22222
+                  <p slot="content">Iphone,是苹果公司。</p>
+                </Panel>
+              </Collapse>
             </div>
-            <div class="subChart secChart">
-              <div class="lineChart">
-                2222图表
-              </div>
-            </div>
-            <div class="subChart thirdChart">
-              <div class="radiusChart">
-                3333图表
-              </div>
-            </div>
-          </div>
-        </Col>
-      </Row> -->
+          </Panel>
+        </Collapse>
+      </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import '../assets/less/reset.less';
+import TestTime from './testTime.vue';
 export default {
   name: 'HelloWorld',
   data () {
     return {
       msg: 'hello',
       isCollapsed: true,
-      sidebarTag: true
+      sidebarTag: true,
+      value1: 'testValue1',
+      value2: 'testValue2'
     };
   },
+  components: {
+    TestTime
+  },
+  beforeCreate () {
+    console.log('_____beforeCreate');
+  },
+  created () {
+    console.log('created');
+  },
+  beforeMount () {
+    console.log('beforeMount');
+  },
+  mounted () {
+    console.log('mounted');
+    // this.drawLine();
+    // this.draw3DBar();
+  },
+  beforeDestroy () {
+    console.log('beforeDestroy');
+  },
+  destroyed () {
+    console.log('destroyed');
+  },
   methods: {
-    showSidebar () {
-      var sideDom = document.getElementById('common-sidebar-wrap');
-      var switchDom = document.getElementById('common-sidebar-hide');
-      var contentDom = document.getElementById('common-container');
-      if (this.sidebarTag) {
-        this.sidebarTag = false;
-        sideDom.style.width = switchDom.offsetWidth + 'px';
-        contentDom.style.marginLeft = '20px';
-      } else {
-        this.sidebarTag = true;
-        sideDom.style.width = '217px';
-        contentDom.style.marginLeft = '220px';
-      }
-    }
   }
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.head-wrap {
-  height: 72px;
-}
-#common-sidebar-wrap {
-    position: fixed;
-    left: 0;
-    top: 72px;
-    bottom: 0;
-    z-index: 1050;
-    width: 217px;
-    background: #fff;
-    overflow: hidden;
-    transition: width .2s;
-    -moz-transition: width .2s;
-    -webkit-transition: width .2s;
-    -o-transition: width .2s;
-    font-family: Microsoft YaHei,Arial!important;
-    box-shadow: 0 0 5px rgb(155, 153, 153);
-}
-#common-sidebar {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    background-color: #fff;
-    border-right: 1px solid #e7e8ea;
-    overflow: hidden;
-    width: 217px;
-    box-sizing: border-box;
-}
-.sidebar-hide {
-    position: absolute;
-    right: 1px;
-    top: 50%;
-    margin-top: -32px;
-    width: 17px;
-    height: 64px;
-    background-color: rgba(186, 183, 189, 0.444);
-    border: 1px solid #e7e8ea;
-    border-left: 0;
-    cursor: pointer;
-    border-radius: 5px;
-}
-.sidebar-hide span {
-    display: block;
-    margin: 28px auto 0;
-    width: 5px;
-    height: 9px;
-    background: rgba(101, 99, 102, 0.5);
-    border-radius: 2px;
-}
-#common-container {
-  min-height: 871px;
-  margin: 20px 20px 20px 220px;
-  background-color: #fff;
-}
-.common-container-animation {
-  transition: margin .2s;
-  -moz-transition: margin .2s;
-  -webkit-transition: margin .2s;
-  -o-transition: margin .2s;
-}
-.layout{
-    border: 1px solid #d7dde4;
-    background: #f5f7f9;
-    position: relative;
-    border-radius: 4px;
-    overflow: hidden;
-}
-.mainChart-wrap {
-  float: left;
-  width: 75%;
-}
-.subChart-wrap {
-  float: right;
-  width: 300px;
-  border-left: 1px solid blue;
-}
-.subChart {
-  width: 300px;
-  width: 100%;
-  margin-top: 100%;
-  height: 0;
-  overflow: hidden;
-  border-bottom: 1px solid blue;
-}
-</style>

@@ -28,5 +28,6 @@ module.exports = {
     'vetur.validation.template': false,
     "vue/no-parsing-error": [2, { "x-invalid-end-tag": false }],
     "semi": [2, "always"]
+    // "no-extra-semi": 1
   }
 }
