@@ -22,7 +22,6 @@
       float: right;
       width: 32%;
     }
-
   }
 }
 </style>
@@ -30,18 +29,26 @@
   <div class="detail-wrap">
     <div class="detail-row clearfix">
       <div class="detail-col">
-        <div class="chart-wrap">这是第一个图表</div>
+        <div class="chart-wrap">
+          <pie-chart></pie-chart>
+        </div>
       </div>
       <div class="detail-col">
-        <div class="chart-wrap">这是第一个图表</div>
+        <div class="chart-wrap">
+          <heatmap-chart></heatmap-chart>
+        </div>
       </div>
       <div class="detail-col">
-        <div class="chart-wrap">这是第一个图表</div>
+        <div class="chart-wrap">
+          <parallel-chart></parallel-chart>
+        </div>
       </div>
     </div>
     <div class="detail-row clearfix">
       <div class="detail-col">
-        <div class="chart-wrap">这是第一个图表</div>
+        <div class="chart-wrap">
+          <sunburst-chart></sunburst-chart>
+        </div>
       </div>
       <div class="detail-col">
         <div class="chart-wrap">这是第一个图表</div>
@@ -54,12 +61,23 @@
 </template>
 
 <script>
+import PieChart from './PieChart'
+import HeatmapChart from './HeatmapChart'
+import ParallelChart from './ParallelChart'
+import SunburstChart from './SunburstChart'
+
 export default {
   name: 'detail-page',
   data () {
     return {
       msg: 'hello',
     };
+  },
+  components: {
+    PieChart,
+    HeatmapChart,
+    ParallelChart,
+    SunburstChart
   },
   created () {
     console.log('子组件_____created');

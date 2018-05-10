@@ -4,15 +4,17 @@
     height: 100%;
     color: white;
     .pie-chart {
-      border: 1px solid blueviolet;
+      // border: 1px solid blueviolet;
       margin: 0 auto;
+      max-width: 100%;
+      max-height: 100%;
     }
   }
 </style>
 <template>
   <div class="layout-wrap">
-    <h1>饼图展示</h1>
-    <div class="pie-chart" id="pieChart" style="width: 500px;height: 600px;"></div>
+    <!-- <h1>饼图展示</h1> -->
+    <div class="pie-chart" id="pieChart" style="width: 400px;height: 400px;"></div>
   </div>
 </template>
 
@@ -35,7 +37,7 @@ export default {
     drawPie () {
       let pieChart = this.$echarts.init(document.getElementById('pieChart'));
       let pieOption = {
-        backgroundColor: '#2c343c',
+        // backgroundColor: '#2c343c',
 
         title: {
             text: '饼图分布',
@@ -56,7 +58,7 @@ export default {
             min: 80,
             max: 600,
             inRange: {
-                colorLightness: [0, 1]
+                color: ['green','blue'],
             }
         },
         series : [
