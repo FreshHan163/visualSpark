@@ -16,26 +16,10 @@ export default {
       msg: 'hello',
     };
   },
-  beforeCreate () {
-    console.log('子组件_____beforeCreate');
+  created() {
+
   },
-  created () {
-    console.log('子组件_____created');
-  },
-  beforeMount () {
-    console.log('子组件_____beforeMount');
-  },
-  mounted () {
-    console.log('子组件_____mounted');
-    // this.drawLine();
-    // this.draw3DBar();
-  },
-  beforeDestroy () {
-    console.log('子组件_____beforeDestroy');
-  },
-  destroyed () {
-    console.log('子组件_____destroyed');
-  },
+
   methods: {
   }
 };

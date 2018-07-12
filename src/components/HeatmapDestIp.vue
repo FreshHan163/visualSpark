@@ -13,13 +13,13 @@
 </style>
 <template>
   <div class="layout-wrap">
-    <div class="heatmap-chart" id="heatmapChart" style="width: 400px;height: 400px;"></div>
+    <div class="heatmap-chart" id="heatDestIp" style="width: 400px;height: 400px;"></div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HeatmapChart',
+  name: 'HeatmapDestIpChart',
   data () {
     return {
       msg: 'hello',
@@ -31,8 +31,8 @@ export default {
   },
   methods: {
     getHeatmapData() {
-      this.$http.get('/api/getHeatMapSrcIp').then((res) => {
-        console.log('热力图--srcIp数据', res.body);
+      this.$http.get('/api/getHeatMapDestIp').then((res) => {
+        console.log('热力图--destIp数据', res.body);
         this.instances = res.body;
       }).then(() => {
         this.drawHeatmap();
@@ -51,19 +51,19 @@ export default {
           }
         }
         instances.forEach((item, index) => {
-          // data[index].push(item.srcIp);
-          data[index].push(item.srcAllBytes);
+          // data[index].push(item.destIp);
+          data[index].push(item.destAllBytes);
         });
         console.log('新data', data);
-      let heatmapChart = this.$echarts.init(document.getElementById('heatmapChart'));
-      // app.title = '端口流量分布图';
+      let heatmapChart = this.$echarts.init(document.getElementById('heatDestIp'));
+      app.title = '目的IP流量分布图';
 
       var xData = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
       var yData = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
         let heatmapOption = {
           title: {
-            text: '源IP流量分布图',
+            text: '目的端IP流量分布图',
             left: 'center',
             textStyle: {
               color: '#333',
@@ -75,7 +75,7 @@ export default {
                 formatter: function(params) {
                     var res = params.seriesName+'Top100流量<br/>';
                     let subIndex = params.data[0] * 10 + params.data[1];
-                    res += instances[subIndex].srcIp;
+                    res += instances[subIndex].destIp;
                     res += ':<br/>' + params.data[2];
                     return res;
                 }

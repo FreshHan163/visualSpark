@@ -12,7 +12,7 @@
 <template>
   <div class="layout-wrap">
     <h1>展示校园地图--快速定位</h1>
-    <div class="campus-chart" id="campusChart" style="width: 500px;height: 600px;"></div>
+    <div class="campus-chart" ref="campusChart" style="width: 500px;height: 600px;"></div>
   </div>
 </template>
 
@@ -24,11 +24,7 @@ export default {
       msg: 'hello',
     };
   },
-  created () {
-    console.log('子组件_____created');
-  },
   mounted () {
-    console.log('子组件_____mounted');
     this.drawCampus();
     // this.drawLine();
     // this.draw3DBar();

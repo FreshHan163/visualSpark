@@ -144,27 +144,23 @@ export default {
   components: {
     TestTime
   },
-  beforeCreate () {
-    console.log('_____beforeCreate');
-  },
   created () {
     console.log('created');
-  },
-  beforeMount () {
-    console.log('beforeMount');
-  },
-  mounted () {
-    console.log('mounted');
-    // this.drawLine();
-    // this.draw3DBar();
-  },
-  beforeDestroy () {
-    console.log('beforeDestroy');
-  },
-  destroyed () {
-    console.log('destroyed');
+    this.testMethod();
   },
   methods: {
+    testMethod() {
+      var x = [{hours: '04:00'}, {hours: '05:00'}, {hours: '06:00'}, {hours: '07:00'}];
+      let data = [];
+      x.forEach((item) => {
+        console.log(Object.values(item));
+        data = data.concat(Object.values(item));
+        console.log(data);
+      });
+      var arr1 = ['04:00'];
+      var arr2 = ['05:00'];
+      console.log(arr1.concat(arr2));
+    }
   }
 };
 </script>

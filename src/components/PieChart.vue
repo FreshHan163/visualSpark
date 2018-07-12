@@ -14,88 +14,139 @@
 <template>
   <div class="layout-wrap">
     <!-- <h1>饼图展示</h1> -->
-    <div class="pie-chart" id="pieChart" style="width: 400px;height: 400px;"></div>
+    <div class="pie-chart" ref="pieChart" style="width: 400px;height: 400px;"></div>
   </div>
 </template>
 
 <script>
+import echarts from 'echarts';
+
 export default {
   name: 'PieChart',
   data () {
     return {
       msg: 'hello',
+      instances: [],
     };
   },
   created () {
-    console.log('子组件_____created');
-  },
-  mounted () {
-    console.log('子组件_____mounted');
-    this.drawPie();
+    // this.getPieData();
   },
   methods: {
+    getPieData() {
+      this.$http.get('/api/getPiePort').then((res) => {
+        console.log(res.body);
+        res.body.forEach(item => {
+          switch(item.destPort) {
+            case 21:
+              item.destPortType = 'FTP';
+              break;
+            case 23:
+              item.destPortType = 'Telnet';
+              break;
+            case 25:
+              item.destPortType = 'SMTP';
+              break;
+            case 53:
+              item.destPortType = 'DNS';
+              break;
+            case 80:
+              item.destPortType = 'HTTP';
+              break;
+            case 109:
+              item.destPortType = 'POP2';
+              break;
+            case 110:
+              item.destPortType = 'POP3';
+              break;
+            case 111:
+              item.destPortType = 'RPC';
+              break;
+            case 143:
+              item.destPortType = 'IMAP';
+              break;
+            case 161:
+              item.destPortType = 'SNMP';
+              break;
+            default:
+              item.destPortType = 'others';
+              break;
+          }
+        });
+        this.instances = res.body;
+      }).then(() => {
+        this.drawPie();
+      });
+    },
     drawPie () {
-      let pieChart = this.$echarts.init(document.getElementById('pieChart'));
+      let pieChart = echarts.init(this.$refs.pieChart);
+      let instances = this.instances;
+      console.log('pie data is', instances);
+      let pieData = [];
+      // 对数据进行处理，分为x轴、y轴
       let pieOption = {
         // backgroundColor: '#2c343c',
 
         title: {
-            text: '饼图分布',
+            text: '目的端口分布图',
             left: 'center',
             top: 20,
             textStyle: {
                 color: '#ccc'
             }
         },
-
         tooltip : {
             trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
+            formatter: "{a} <br/>{b}: ({d}%)"
         },
 
         visualMap: {
-            show: false,
-            min: 80,
-            max: 600,
+            show: true,
+            min: 340000,
+            max: 520000,
             inRange: {
-                color: ['green','blue'],
+                color: ['yellow','blue'],
             }
+        },
+        dataset: {
+          dimensions: ['destPort', 'destPortType', 'srcBytes'],
+          source: instances
         },
         series : [
             {
-                name:'访问来源',
+                name:'端口流量分布',
                 color: 'white',
                 type:'pie',
                 radius : '55%',
                 center: ['50%', '50%'],
-                data:[
-                    {value:335, name:'直接访问'},
-                    {value:310, name:'邮件营销'},
-                    {value:274, name:'联盟广告'},
-                    {value:235, name:'视频广告'},
-                    {value:400, name:'搜索引擎'}
-                ].sort(function (a, b) { return a.value - b.value; }),
-                roseType: 'radius',
+                // roseType: 'radius',
                 label: {
                     normal: {
+                      position: 'left',
+                      distance: 3,
+                      formatter: '{b}: ({d}%)',
                         textStyle: {
-                            color: 'rgba(255, 255, 255, 0.3)'
+                            color: 'rgba(0, 0, 0, 0.8)'
                         }
                     }
+                },
+                encode: {
+                  itemName: 'destPortType',
+                  value: 'srcBytes'
                 },
                 labelLine: {
                     normal: {
                         lineStyle: {
-                            color: 'rgba(255, 255, 255, 0.3)'
+                            color: 'rgba(0, 0, 0, 0.8)'
                         },
                         smooth: 0.2,
-                        length: 10,
-                        length2: 20
+                        length: 5,
+                        length2: 10
                     }
                 },
                 itemStyle: {
                     normal: {
-                        color: '#c23531',
+                        color: 'red',
                         shadowBlur: 200,
                         shadowColor: 'rgba(0, 0, 0, 0.5)'
                     }

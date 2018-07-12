@@ -8,6 +8,8 @@ import DetailPage from '@/components/DetailPage'
 import CampusChart from '@/components/CampusChart'
 import HeatmapChart from '@/components/HeatmapChart'
 import PieChart from '@/components/PieChart'
+import ExpressPart from '@/components/ExpressPart'
+import SunChart from '@/components/SunburstChart'
 
 Vue.use(Router)
 
@@ -52,6 +54,16 @@ export default new Router({
       path: '/pie',
       name: 'PieChart',
       component: PieChart
-    }
+    },
+    {
+      path: '/express',
+      name: 'ExpressPart',
+      component: ExpressPart
+    },
+    {
+      path: '/sun',
+      name: 'SunChart',
+      component: SunChart
+    },
   ]
 })

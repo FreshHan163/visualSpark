@@ -27,10 +27,51 @@
 </style>
 <template>
   <div class="detail-wrap">
-    <div class="detail-row clearfix">
-      <div class="detail-col">
+    <Row>
+      <Col span="24">
+        <div class="chart-wrap" style="width: 1000px; height: 400px;">
+          <parallel-chart></parallel-chart>
+        </div>
+      </Col>
+    </Row>
+    <Row>
+      <Col span="6">
+        <div class="chart-wrap">
+          <heatmap-chart></heatmap-chart>
+        </div>
+      </Col>
+      <Col span="6">
+        <div class="chart-wrap">
+          <heatmap-src-port></heatmap-src-port>
+        </div>
+      </Col>
+      <Col span="6">
+        <div class="chart-wrap">
+          <heatmap-dest-ip></heatmap-dest-ip>
+        </div>
+      </Col>
+      <Col span="6">
+        <div class="chart-wrap">
+          <heatmap-dest-port></heatmap-dest-port>
+        </div>
+      </Col>
+    </Row>
+    <Row>
+      <Col span="24">
+        <div class="chart-wrap" style="width: 1000px; height: 400px;">
+          <line-chart></line-chart>
+        </div>
+      </Col>
+    </Row>
+    <!-- <div class="detail-row clearfix"> -->
+      <!-- <div class="detail-col">
         <div class="chart-wrap">
           <pie-chart></pie-chart>
+        </div>
+      </div> -->
+      <!-- <div class="detail-col">
+        <div class="chart-wrap">
+          <heatmap-chart></heatmap-chart>
         </div>
       </div>
       <div class="detail-col">
@@ -40,10 +81,20 @@
       </div>
       <div class="detail-col">
         <div class="chart-wrap">
-          <parallel-chart></parallel-chart>
+          <heatmap-chart></heatmap-chart>
         </div>
       </div>
-    </div>
+      <div class="detail-col">
+        <div class="chart-wrap">
+          <heatmap-chart></heatmap-chart>
+        </div>
+      </div> -->
+      <!-- <div class="detail-col">
+        <div class="chart-wrap" style="width: 1000px; height: 400px;">
+          <parallel-chart></parallel-chart>
+        </div>
+      </div> -->
+    <!-- </div>
     <div class="detail-row clearfix">
       <div class="detail-col">
         <div class="chart-wrap">
@@ -57,12 +108,21 @@
         <div class="chart-wrap">这是第一个图表</div>
       </div>
     </div>
+    <div class="detail-col">
+      <div class="chart-wrap" style="width: 1000px; height: 400px;">
+        <parallel-chart></parallel-chart>
+      </div>
+    </div> -->
   </div>
 </template>
 
 <script>
 import PieChart from './PieChart'
+import LineChart from './lineIp'
 import HeatmapChart from './HeatmapChart'
+import HeatmapSrcPort from './HeatmapSrcPort'
+import HeatmapDestIp from './HeatmapDestIp'
+import HeatmapDestPort from './HeatmapDestPort'
 import ParallelChart from './ParallelChart'
 import SunburstChart from './SunburstChart'
 
@@ -75,12 +135,13 @@ export default {
   },
   components: {
     PieChart,
+    LineChart,
     HeatmapChart,
     ParallelChart,
-    SunburstChart
-  },
-  created () {
-    console.log('子组件_____created');
+    SunburstChart,
+    HeatmapSrcPort,
+    HeatmapDestIp,
+    HeatmapDestPort,
   },
   methods: {
   }
