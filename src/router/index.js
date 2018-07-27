@@ -10,6 +10,8 @@ import HeatmapChart from '@/components/HeatmapChart'
 import PieChart from '@/components/PieChart'
 import ExpressPart from '@/components/ExpressPart'
 import SunChart from '@/components/SunburstChart'
+import TopChart from '@/components/topChart'
+import Calender from '@/components/calender'
 
 Vue.use(Router)
 
@@ -26,6 +28,11 @@ export default new Router({
       component: Layout
     },
     {
+      path: '/detail',
+      name: 'DetailPage',
+      component: DetailPage
+    },
+    {
       path: '/guide',
       name: 'GuideChart',
       component: GuideChart
@@ -34,11 +41,6 @@ export default new Router({
       path: '/flex',
       name: 'FlexChart',
       component: FlexChart
-    },
-    {
-      path: '/detail',
-      name: 'DetailPage',
-      component: DetailPage
     },
     {
       path: '/campus',
@@ -65,5 +67,15 @@ export default new Router({
       name: 'SunChart',
       component: SunChart
     },
+    {
+      path: '/top',
+      name: 'TopChart',
+      component: TopChart
+    },
+    {
+      path: '/cal',
+      name: 'Calender',
+      component: Calender
+    }
   ]
 })

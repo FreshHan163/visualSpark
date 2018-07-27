@@ -87,7 +87,7 @@ var sqlVisualSPark = {
     queryParaSrcIp: `SELECT
     t3.hours,
     t3.protocolCode,
-    SUM(-t3.rate * LOG(t3.rate)) as srcPortEntropy
+    SUM(-t3.rate * LOG(t3.rate)) as srcIpEntropy
   from (
     SELECT
       t1.hours,
@@ -129,40 +129,174 @@ var sqlVisualSPark = {
     t3.protocolCode
   order by
     hours`,
-    querySunburstUdp: `select sum(sunburst.srcBytes) as srcAllBytes, srcPort, protocolCode
+    queryParaSrcPort: `SELECT
+    SUM(-t3.rate * LOG(t3.rate)) as srcPortEntropy,
+    t3.hours,
+    t3.protocolCode
+  from (
+    SELECT
+      t1.hours,
+      t1.protocolCode,
+      t1.srcPort,
+      t1.countSrcPort,
+      t2.countAllPort,
+      t1.countSrcPort/t2.countAllPort as rate
+    FROM(
+        SELECT
+          FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00') AS hours,
+          protocolCode,
+          srcPort,
+          COUNT(*) as countSrcPort
+        FROM
+          challenge
+        GROUP BY
+          hours,
+          protocolCode,
+          srcPort
+      ) t1
+      JOIN
+      (
+        SELECT
+          FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00') AS hours,
+          protocolCode,
+          SUM(srcTotalBytes),
+          COUNT(*) as countAllPort
+        FROM
+          challenge
+        GROUP BY
+          hours,
+          protocolCode
+      ) t2
+      ON t1.hours = t2.hours AND t1.protocolCode = t2.protocolCode
+  ) t3
+  GROUP BY
+    t3.hours,
+    t3.protocolCode
+  order by
+    hours`,
+    queryParaDestIp: `SELECT
+    SUM(-t3.rate * LOG(t3.rate)) as destIpEntropy,
+    t3.hours,
+    t3.protocolCode
+  from (
+    SELECT
+      t1.hours,
+      t1.protocolCode,
+      t1.destIp,
+      t1.countDestIp,
+      t2.countAllIp,
+      t1.countDestIp/t2.countAllIp as rate
+    FROM(
+        SELECT
+          FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00') AS hours,
+          protocolCode,
+          destIp,
+          COUNT(*) as countDestIp
+        FROM
+          challenge
+        GROUP BY
+          hours,
+          protocolCode,
+          destIp
+      ) t1
+      JOIN
+      (
+        SELECT
+          FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00') AS hours,
+          protocolCode,
+          SUM(destTotalBytes),
+          COUNT(*) as countAllIp
+        FROM
+          challenge
+        GROUP BY
+          hours,
+          protocolCode
+      ) t2
+      ON t1.hours = t2.hours AND t1.protocolCode = t2.protocolCode
+  ) t3
+  GROUP BY
+    t3.hours,
+    t3.protocolCode
+  order by
+    hours`,
+    queryParaDestPort: `SELECT
+    SUM(-t3.rate * LOG(t3.rate)) as destPortEntropy,
+    t3.hours,
+    t3.protocolCode
+  from (
+    SELECT
+      t1.hours,
+      t1.protocolCode,
+      t1.destPort,
+      t1.countDestPort,
+      t2.countAllPort,
+      t1.countDestPort/t2.countAllPort as rate
+    FROM(
+        SELECT
+          FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00') AS hours,
+          protocolCode,
+          destPort,
+          COUNT(*) as countDestPort
+        FROM
+          challenge
+        GROUP BY
+          hours,
+          protocolCode,
+          destPort
+      ) t1
+      JOIN
+      (
+        SELECT
+          FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00') AS hours,
+          protocolCode,
+          COUNT(*) as countAllPort
+        FROM
+          challenge
+        GROUP BY
+          hours,
+          protocolCode
+      ) t2
+      ON t1.hours = t2.hours AND t1.protocolCode = t2.protocolCode
+  ) t3
+  GROUP BY
+    t3.hours,
+    t3.protocolCode
+  order by
+    hours`,
+    querySunburstUdp: `select sum(sunburst.srcBytes) as srcAllBytes, destPort, protocolCode
     from
     (select
-      SUM(srcTotalBytes) as srcBytes, srcPort, protocolCode,
+      SUM(srcTotalBytes) as srcBytes, destPort, protocolCode,
       FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00')
       AS hours
     from
       challenge
     GROUP BY
-      TimeSeconds, protocolCode, srcPort
+      TimeSeconds, protocolCode, destPort
     ) as sunburst
     where
       sunburst.hours = '2013-04-01 16:00:00' AND sunburst.protocolCode = 'UDP'
     group by
-      sunburst.hours, sunburst.protocolCode, sunburst.srcPort
+      sunburst.hours, sunburst.protocolCode, sunburst.destPort
     order by
       protocolCode, srcAllBytes
     DESC
     LIMIT 0,5`,
-    querySunburstTcp: `select sum(sunburst.srcBytes) as srcAllBytes, srcPort, protocolCode
+    querySunburstTcp: `select sum(sunburst.srcBytes) as srcAllBytes, destPort, protocolCode
     from
     (select
-      SUM(srcTotalBytes) as srcBytes, srcPort, protocolCode,
+      SUM(srcTotalBytes) as srcBytes, destPort, protocolCode,
       FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00')
       AS hours
     from
       challenge
     GROUP BY
-      TimeSeconds, protocolCode, srcPort
+      TimeSeconds, protocolCode, destPort
     ) as sunburst
     where
       sunburst.hours = '2013-04-01 16:00:00' AND sunburst.protocolCode = 'TCP'
     group by
-      sunburst.hours, sunburst.protocolCode, sunburst.srcPort
+      sunburst.hours, sunburst.protocolCode, sunburst.destPort
     order by
       protocolCode, srcAllBytes
     DESC
@@ -170,18 +304,18 @@ var sqlVisualSPark = {
     querySunburstOther: `select sum(sunburst.srcBytes) as srcAllBytes, srcPort, protocolCode
     from
     (select
-      SUM(srcTotalBytes) as srcBytes, srcPort, protocolCode,
+      SUM(srcTotalBytes) as srcBytes, destPort, protocolCode,
       FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00')
       AS hours
     from
       challenge
     GROUP BY
-      TimeSeconds, protocolCode, srcPort
+      TimeSeconds, protocolCode, destPort
     ) as sunburst
     where
       sunburst.hours = '2013-04-01 16:00:00' AND sunburst.protocolCode = 'OTHER'
     group by
-      sunburst.hours, sunburst.protocolCode, sunburst.srcPort
+      sunburst.hours, sunburst.protocolCode, sunburst.destPort
     order by
       protocolCode, srcAllBytes
     DESC

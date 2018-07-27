@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     getHeatmapData() {
-      this.$http.get('/api/getHeatMapDestIp').then((res) => {
+      this.$http.get('/api/getHeatDestIp').then((res) => {
         console.log('热力图--destIp数据', res.body);
         this.instances = res.body;
       }).then(() => {

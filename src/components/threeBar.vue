@@ -3,18 +3,17 @@
   .layout-wrap {
     height: 100%;
     // color: white;
-    .pie-chart {
-      // border: 1px solid blueviolet;
+    .three-bar-chart {
+      width: 1000px;
+      height: 400px;
       margin: 0 auto;
-      max-width: 100%;
-      max-height: 100%;
     }
   }
 </style>
 <template>
   <div class="layout-wrap">
     <!-- <h1>饼图展示</h1> -->
-    <div class="three-bar-chart" ref="threeBarChart" style="width: inherit; height: inherit;"></div>
+    <div class="three-bar-chart" ref="threeBarChart" style=""></div>
   </div>
 </template>
 
@@ -38,15 +37,11 @@ export default {
 
   methods: {
     getBarData() {
-      this.$http.get('/api/getVisual').then((res) => {
+      this.$http.get('/api/getThreeBar').then((res) => {
         let index = 0;
         console.log('输出的数据为',res.body);
         // 数组取最早时间、最晚时间，然后划分时间段？
-        this.xData = ['2018-04-02 14:00:00', '2018-04-02 13:00:00', '2018-04-02 12:00:00', '2018-04-02 11:00:00', '2018-04-02 10:00:00',
-                      '2018-04-02 09:00:00', '2018-04-02 08:00:00', '2018-04-02 07:00:00', '2018-04-02 06:00:00', '2018-04-02 05:00:00',
-                      '2018-04-02 04:00:00', '2018-04-02 03:00:00', '2018-04-02 02:00:00', '2018-04-02 01:00:00', '2018-04-02 00:00:00',
-                      '2018-04-01 23:00:00', '2018-04-01 22:00:00', '2018-04-01 21:00:00', '2018-04-01 20:00:00', '2018-04-01 19:00:00',
-                      '2018-04-01 18:00:00', '2018-04-01 17:00:00', '2018-04-01 16:00:00', '2018-04-01 15:00:00', '2018-04-01 14:00:00'];
+        this.xData = ['2018-04-01', '2018-04-02', '2018-04-03', '2018-04-04', '2018-04-05', '2018-04-06', '2018-04-07', ]
         this.yData = ['TCP', 'UDP', 'OTHER'];
         let xlen = this.xData.length;
         let ylen = this.yData.length;
@@ -76,7 +71,7 @@ export default {
     },
     drawThreeBar () {
       let threeBarChart = echarts.init(this.$refs.threeBarChart);
-      // 数据 hours代表x轴，days代表y轴,data，代表z轴--值，都是数组类型
+      // 数据 days代表x轴，days代表y轴,data，代表z轴--值，都是数组类型
       // 替换 x--时间，y轴协议类型，z轴当前流量（入流量还是出流量？？？）
       console.log('创建三维柱状图！');
       let data = [];
@@ -90,11 +85,16 @@ export default {
       // dataset = this.instances;
       console.log(data);
       let threeBarption = {
-          tooltip: {},
+          tooltip: {
+            formatter: function (params) {
+              return params.seriesName + '<br/>' + params.data;
+            }
+          },
           visualMap: {
-              max: 2000000,
+              // max: 190000000,
+              max: 4300000000,
               min: 0,
-              left: 10,
+              right: 10,
               bottom: 10,
               dimension: 'srcAllBytes',
               inRange: {
@@ -107,26 +107,63 @@ export default {
               // }
           },
           xAxis3D: {
-              type: 'category'
+              type: 'category',
+              name: '',
+              axisLabel: {
+                show: true,
+                margin: 20,
+                textStyle: {
+                  color: 'white'
+                },
+                interval: 12,
+                formatter: function (value, index) {
+                    // 格式化成月/日，只在第一个刻度显示年份
+                    var date = new Date(value);
+                    var texts = [(date.getMonth() + 1), date.getDate()];
+                    var hours = [date.getHours(), date.getMinutes()];
+                    if (index === 0) {
+                        // texts.unshift(date.getYear());
+                    }
+                    var time = texts.join('/') + ' ' + hours.join(':') + '0';
+                    return time;
+                }
+              }
           },
           yAxis3D: {
-              type: 'category'
+              name: '',
+              type: 'category',
+              axisLabel: {
+                show: true,
+                textStyle: {
+                  color: 'white'
+                }
+              }
           },
           zAxis3D: {
               type: 'value',
               name: '总流量',
               nameTextStyle: {
-                verticalAlign: 'bottom',
+                color: 'white'
+              },
+              axisLabel: {
+                formatter: function(value, index) {
+                  return value / 1000000000 + 'TB';
+                },
+                textStyle: {
+                  color: 'white'
+                }
               },
               nameLocation: 'end',
-              min: 0,
-              max: 2000000
+              // min: 0,
+              // max: 2000000
           },
           grid3D: {
               boxWidth: 400,
               boxDepth: 80,
               left: -100,
               top: 0,
+              // boxWidth: 200,
+              // boxDepth: 80,
               viewControl: {
                   // projection: 'orthographic'
                   distance: 320,
@@ -143,41 +180,70 @@ export default {
           },
           dataset: {
             dimensions: [
-              'srcAllBytes',
+              'days',
               'protocolCode',
-              'hours'
+              'srcAllBytes'
             ],
             source: data
           },
           series: [
               {
                 type: 'bar3D',
+                name: '流量时序图',
                 // symbolSize: symbolSize,
                 shading: 'lambert',
                 encode: {
-                    x: 'hours',
+                    x: 'days',
                     y: 'protocolCode',
                     z: 'srcAllBytes',
-                    tooltip: [0, 1, 2]
+                    tooltip: [0, 1, 2],
+                    label: 2
+                },
+                label: {
+                  // formatter: '{c0}'
+                  formatter: function (params) {
+                    return params.data[2];
+                  }
                 },
                 itemStyle: {
-                    opacity: 0.4
+                    // opacity: 0.4
                 },
                 emphasis: {
                     label: {
                         textStyle: {
                             fontSize: 20,
-                            color: '#900'
+                            color: '#64A0B7'
                         }
                     },
                     itemStyle: {
-                        color: '#900'
+                        color: '#64A0B7'
                     }
                 }
               }
           ]
       };
       threeBarChart.setOption(threeBarption);
+    //   threeBarChart.dispatchAction({
+    //     type: 'selectDataRange',
+    //     // 选取 20 到 40 的值范围
+    //     selected: [200000000, 4000000000],
+    //     // 取消选中第二段
+    //     // selected: { 1: false },
+    //     // 取消选中类目 `优`
+    //     // selected: { '优': false }
+    // });
+      threeBarChart.on('mouseover', function (parmas) {
+        console.log(parmas);
+          // $.get('detail?q=' + params.name, function (detail) {
+          //     myChart.setOption({
+          //         series: [{
+          //             name: 'pie',
+          //             // 通过饼图表现单个柱子中的数据分布
+          //             data: [detail.data]
+          //         }]
+          //     });
+          // });
+      });
     }
   }
 };

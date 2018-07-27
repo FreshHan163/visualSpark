@@ -1,4 +1,5 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+import func from './vue-temp/vue-editor-bridge';
 <style lang="less">
   .layout-wrap {
     height: 100%;
@@ -25,11 +26,16 @@ export default {
       msg: 'hello',
       instances: [],
       timeData: [],
-      codeTypeData: [
-        'TCP',
-        'UDP',
-        'OTHER'
-      ]
+      tcpInstances: [],
+      udpInstances: [],
+      otherInstances: [],
+      srcIpData: [],
+      srcPortData: [],
+      destIpData: [],
+      destPortData: [],
+      bytesData: [],
+      countData: [],
+      pktsData: []
     };
   },
 
@@ -40,187 +46,311 @@ export default {
   },
   methods: {
     getTimeData() {
-      this.$http.get('/api/getTimeData').then((res) => {
+      this.$http.get('/api/getParaTimeData').then((res) => {
         res.body.forEach((item) => {
+          // var date = new Date(Object.values(item)[0]);
+          // var days = [(date.getMonth() + 1), date.getDate()];
+          // var hours = [date.getHours(), date.getMinutes()];
+          // var texts = '';
+          // if (hours[0] === 12) {
+          //   texts = days.join('/') + ' ' + hours.join(':') + '0';
+          // } else {
+          //   texts = days.join('/');
+          // }
+          // texts = days.join('/');
+          // if (this.timeData.indexOf(texts) === -1) {
+          //   this.timeData.push(texts);
+          // } else {
+          //   this.timeData.push('');
+          // }
           this.timeData = this.timeData.concat(Object.values(item));
         });
         console.log('处理后的数组timeData', this.timeData);
+
       }).then(() => {
-        this.getParaDestPortData();
+        this.getParaSrcIp();
+        this.getParaSrcPort();
+        this.getParaDestIp();
+        this.getParaDestPort();
+        this.getParaTotalCount();
+        this.getParaTotalBytes();
+        this.getParaTotalPackets();
       });
     },
-    getParaDestPortData() {
-      this.$http.get('/api/getParaSrcIp').then((res) => {
-        console.log('平行坐标图----DestPort数据', res.body);
+    getParaSrcIp() {
+      // this.$http.get('/api/getParaSrcIp').then((res) => {
+      this.$http.get('/api/getSrcIpEntropyHours').then((res) => {
         res.body.forEach((item) => {
-          this.instances.push(Object.values(item));
+          // if (!item.srcIpEntropyTotal) {
+          //   item.srcIpEntropyTotal = 0;
+          // }
+          this.srcIpData.push(Object.values(item));
         });
-        console.log('处理后的数组instances', this.instances);
-      }).then(() => {
-        this.drawParallel();
+        console.log('平行坐标图----srcIp数据', this.srcIpData);
       });
     },
-    drawParallel () {
-      let parallelChart = this.$echarts.init(document.getElementById('parallelChart'));
-      var dataBJ = [
-          [1,55,9,56,0.46,18,6,"良"],
-          [2,25,11,21,0.65,34,9,"优"],
-          [3,56,7,63,0.3,14,5,"良"],
-          [4,33,7,29,0.33,16,6,"优"],
-          [5,42,24,44,0.76,40,16,"优"],
-          [6,82,58,90,1.77,68,33,"良"],
-          [7,74,49,77,1.46,48,27,"良"],
-          [8,78,55,80,1.29,59,29,"良"],
-          [9,267,216,280,4.8,108,64,"重度污染"],
-          [10,185,127,216,2.52,61,27,"中度污染"],
-          [11,39,19,38,0.57,31,15,"优"],
-          [12,41,11,40,0.43,21,7,"优"],
-          [13,64,38,74,1.04,46,22,"良"],
-          [14,108,79,120,1.7,75,41,"轻度污染"],
-          [15,108,63,116,1.48,44,26,"轻度污染"],
-          [16,33,6,29,0.34,13,5,"优"],
-          [17,94,66,110,1.54,62,31,"良"],
-          [18,186,142,192,3.88,93,79,"中度污染"],
-          [19,57,31,54,0.96,32,14,"良"],
-          [20,22,8,17,0.48,23,10,"优"],
-          [21,39,15,36,0.61,29,13,"优"],
-          [22,94,69,114,2.08,73,39,"良"],
-          [23,99,73,110,2.43,76,48,"良"],
-          [24,31,12,30,0.5,32,16,"优"],
-          [25,42,27,43,1,53,22,"优"],
-          [26,154,117,157,3.05,92,58,"中度污染"],
-          [27,234,185,230,4.09,123,69,"重度污染"],
-          [28,160,120,186,2.77,91,50,"中度污染"],
-          [29,134,96,165,2.76,83,41,"轻度污染"],
-          [30,52,24,60,1.03,50,21,"良"],
-          [31,46,5,49,0.28,10,6,"优"]
-      ];
-
-      var schema = [
-          {name: 'date', index: 0, text: '日期'},
-          {name: 'AQIindex', index: 1, text: '连接数'},
-          {name: 'PM25', index: 2, text: '字节数'},
-          {name: 'PM10', index: 3, text: '源端口熵'},
-          {name: 'CO', index: 4, text: ' 源IP熵'},
-          {name: 'NO2', index: 5, text: '目的端口熵'},
-          {name: 'SO2', index: 6, text: '目的IP熵'},
-          {name: '等级', index: 7, text: '等级'}
-      ];
-      var srcIpEntropy = [
-        {name: 'time', index: 0, text: '时间'},
-        {name: 'codeType', index: 1, text: '协议类型'},
-        {name: 'srcIp', index: 2, text: '源IP熵'}
-      ];
-
-      var lineStyle = {
-          normal: {
-              width: 1,
-              opacity: 0.5
+    getParaSrcPort() {
+      // this.$http.get('/api/getParaSrcPort').then((res) => {
+      this.$http.get('/api/getSrcPortEntropyHours').then((res) => {
+        res.body.forEach((item, index) => {
+          // if (!item.srcPortEntropyTotal) {
+          //   item.srcPortEntropyTotal = 0;
+          // }
+          this.srcPortData.push(Object.values(item));
+          this.srcIpData[index].push(item.srcPortEntropyTotal);
+        });
+        console.log('平行坐标图----srcPort数据', this.srcPortData);
+      });
+    },
+    getParaDestIp() {
+      // this.$http.get('/api/getParaDestIp').then((res) => {
+      this.$http.get('/api/getDestIpEntropyHours').then((res) => {
+        res.body.forEach((item, index) => {
+          // if (!item.destIpEntropyTotal) {
+          //   item.destIpEntropyTotal = 0;
+          // }
+          this.destPortData.push(Object.values(item));
+          // this.srcIpData[index].push(item.destIpEntropy);
+          this.srcIpData[index].push(item.destIpEntropyTotal);
+        });
+        console.log('平行坐标图----destPort数据', this.destPortData);
+      });
+    },
+    getParaDestPort() {
+      // this.$http.get('/api/getParaDestPort').then((res) => {
+      this.$http.get('/api/getDestPortEntropyHours').then((res) => {
+        res.body.forEach((item, index) => {
+          // if (!item.destPortEntropyTotal) {
+          //   item.destPortEntropyTotal = 0;
+          // }
+          this.destIpData.push(Object.values(item));
+          // this.srcIpData[index].push(item.destPortEntropy);
+          this.srcIpData[index].push(item.destPortEntropyTotal);
+        });
+        console.log('平行坐标图----destIp数据', this.destIpData);
+      });
+    },
+    getParaTotalCount() {
+      this.$http.get('/api/getParaTotalCount').then((res) => {
+        res.body.forEach((item, index) => {
+          // if (!item.destPortEntropyTotal) {
+          //   item.destPortEntropyTotal = 0;
+          // }
+          this.countData.push(Object.values(item));
+          this.srcIpData[index].push(item.count);
+        });
+      });
+    },
+    getParaTotalBytes() {
+      this.$http.get('/api/getParaTotalBytes').then((res) => {
+        res.body.forEach((item, index) => {
+          // if (!item.destPortEntropyTotal) {
+          //   item.destPortEntropyTotal = 0;
+          // }
+          this.bytesData.push(Object.values(item));
+          this.srcIpData[index].push(item.bytes);
+        });
+      });
+    },
+    getParaTotalPackets() {
+      this.$http.get('/api/getParaTotalPackets').then((res) => {
+      res.body.forEach((item, index) => {
+        // if (!item.destPortEntropyTotal) {
+        //   item.destPortEntropyTotal = 0;
+        // }
+        this.pktsData.push(Object.values(item));
+        this.srcIpData[index].push(item.packets);
+      });
+      }).then(() => {
+        console.log('绘制平行坐标图');
+        console.log(this.srcIpData);
+        this.srcIpData.forEach((item, index) => {
+          switch (item[1]) {
+            case 'TCP':
+              item.splice(1, 1);
+              this.tcpInstances.push(item);
+              break;
+            case 'UDP':
+              item.splice(1, 1);
+              this.udpInstances.push(item);
+              break;
+            case 'OTHER':
+              item.splice(1, 1);
+              this.otherInstances.push(item);
+              break;
+            default:
+              break;
           }
-      };
+        });
+        console.log('tcpInstances:', this.tcpInstances);
+        console.log('udpInstances:', this.udpInstances);
+        console.log('otherInstances:', this.otherInstances);
+        this.drawChallParallel();
+      });
+    },
+    drawChallParallel () {
+      let parallelChart = this.$echarts.init(document.getElementById('parallelChart'));
 
-      let parallelOption = {
-          // backgroundColor: '#333',
-          // legend: {
-          //     bottom: 30,
-          //     data: ['北京', '上海', '广州'],
-          //     itemGap: 20,
-          //     textStyle: {
-          //         color: 'black',
-          //         fontSize: 14
-          //     }
-          // },
-          tooltip: {
-              triggerOn: 'mousemove',
-              padding: 10,
-              backgroundColor: '#222',
-              borderColor: '#777',
-              borderWidth: 1,
-              // formatter: function (obj) {
-              //     var value = obj[0].value;
-              //     return '<div style="border-bottom: 1px solid rgba(255,255,255,.3); font-size: 18px;padding-bottom: 7px;margin-bottom: 7px">'
-              //         + obj[0].seriesName + ' ' + value[0] + '日期：'
-              //         + value[7]
-              //         + '</div>'
-              //         + schema[1].text + '：' + value[1] + '<br>'
-              //         + schema[2].text + '：' + value[2] + '<br>'
-              //         + schema[3].text + '：' + value[3] + '<br>'
-              //         + schema[4].text + '：' + value[4] + '<br>'
-              //         + schema[5].text + '：' + value[5] + '<br>'
-              //         + schema[6].text + '：' + value[6] + '<br>';
-              // }
-          },
-          // dataZoom: {
-          //     show: true,
-          //     orient: 'vertical',
-          //     parallelAxisIndex: [0]
-          // },
-          parallelAxis: [
-            {dim: 0, name: srcIpEntropy[0].text, type: 'category', data: this.timeData},
-            {dim: 1, name: srcIpEntropy[1].text, type: 'category', data: ['UDP', 'TCP', 'OTHER']},
-            {dim: 2, name: srcIpEntropy[2].text},
-              // {dim: 0, name: schema[0].text, inverse: true, max: 31, nameLocation: 'start'},
-              // {dim: 1, name: schema[1].text},
-              // {dim: 2, name: schema[2].text},
-              // {dim: 3, name: schema[3].text},
-              // {dim: 4, name: schema[4].text},
-              // {dim: 5, name: schema[5].text},
-              // {dim: 6, name: schema[6].text},
-              // {dim: 7, name: schema[7].text,
-              // type: 'category', data: ['优', '良', '正常', '0.8', '0.9', '1']}
-          ],
-          visualMap: {
-              show: false,
-              min: 0,
-              max: 8,
-              dimension: 2,
-              inRange: {
-                  color: ['green','blue','#50a3ba'].reverse(),
-              }
-          },
-          parallel: {
-              left: '5%',
-              right: '18%',
-              bottom: 100,
-              parallelAxisDefault: {
-                  type: 'value',
-                  name: 'AQI指数',
-                  nameLocation: 'end',
-                  nameGap: 20,
-                  nameTextStyle: {
-                      color: 'black',
-                      fontSize: 12
+    var schema = [
+        {name: 'date', index: 0, text: '日期'},
+        {name: '源IP熵', index: 1, text: '源IP熵'},
+        {name: '源端口熵', index: 2, text: '源端口熵'},
+        {name: '目的IP熵', index: 3, text: '目的IP熵'},
+        {name: '目的端口熵', index: 4, text: ' 目的端口熵'},
+        {name: '连接数', index: 5, text: ' 连接数'},
+        {name: '字节数', index: 6, text: ' 字节数'},
+        {name: '包数', index: 7, text: ' 包数'},
+    ];
+
+    var lineStyle = {
+        normal: {
+            width: 1,
+            opacity: 0.5
+        }
+    };
+
+    let option = {
+        backgroundColor: '#333',
+        legend: {
+            right: 10,
+            data: ['TCP', 'UDP', 'OTHER'],
+            itemGap: 20,
+            textStyle: {
+                color: '#fff',
+                fontSize: 14
+            }
+        },
+        parallelAxis: [
+            {
+              dim: 0,
+              name:schema[0].text,
+              type: 'category',
+              data: this.timeData,
+              axisTick: {
+                inside: false,
+                interval: function (value, index) {
+                  var date = new Date(value);
+                    var days = [(date.getMonth() + 1), date.getDate()];
+                    var hours = date.getHours();
+                    if (hours === 0 || days[0] === 1 || days[0] === 2) {
+                      return true;
+                    }
+                    return false;
+                },
+                length: 10
+              },
+              axisLabel: {
+                  formatter: function(value, index) {
+                    var date = new Date(value);
+                    var days = [(date.getMonth() + 1), date.getDate()];
+                    var hours = [date.getHours(), date.getMinutes()];
+                    var texts = '';
+                    if (hours[0] === 0 || hours[0] === 12 || days[1] === 1 & hours[0] === 15 || days[1] === 2 & hours[0] === 13) {
+                      texts = days.join('/') + ' ' + hours.join(':') + '0';
+                    }
+                    return texts;
                   },
-                  axisLine: {
-                      lineStyle: {
-                          color: '#aaa'
-                      }
-                  },
-                  axisTick: {
-                      lineStyle: {
-                          color: '#777'
-                      }
-                  },
-                  splitLine: {
-                      show: false
-                  },
-                  axisLabel: {
-                      textStyle: {
-                          color: 'black'
-                      }
+                  textStyle: {
+                      color: 'white'
                   }
               }
-          },
-          series: [
-              {
-                  name: '北京',
-                  type: 'parallel',
-                  lineStyle: lineStyle,
-                  data: this.instances
-              }
-          ]
-      };
-      parallelChart.setOption(parallelOption);
+            },
+            {dim: 1, name: schema[1].text},
+            {dim: 2, name: schema[2].text},
+            {dim: 3, name: schema[3].text},
+            {dim: 4, name: schema[4].text},
+            {dim: 5, name: schema[5].text},
+            {dim: 6, name: schema[6].text},
+            {dim: 7, name: schema[7].text}
+        ],
+        visualMap: {
+            show: true,
+            min: 0,
+            max: 1,
+            right: 0,
+            dimension: 6,
+            inRange: {
+                color: ['#d94e5d','#eac736','#50a3ba'].reverse(),
+                // colorAlpha: [0, 1]
+            }
+        },
+        parallel: {
+            left: '5%',
+            right: '18%',
+            bottom: 100,
+            parallelAxisDefault: {
+                type: 'value',
+                // name: 'AQI指数',
+                silent: 'true',
+                triggerEvent: 'true',
+                nameLocation: 'end',
+                nameGap: 20,
+                nameTextStyle: {
+                    color: '#fff',
+                    fontSize: 12
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#aaa'
+                    }
+                },
+                axisTick: {
+                    lineStyle: {
+                        color: '#777'
+                    }
+                },
+                splitLine: {
+                    show: false
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#fff'
+                    }
+                }
+            }
+        },
+        series: [
+            {
+                name: 'TCP',
+                type: 'parallel',
+                lineStyle: lineStyle,
+                data: this.tcpInstances
+            },
+            {
+                name: 'UDP',
+                type: 'parallel',
+                lineStyle: lineStyle,
+                data: this.udpInstances
+            },
+            {
+                name: 'OTHER',
+                type: 'parallel',
+                lineStyle: lineStyle,
+                data: this.otherInstances
+            }
+        ]
+    };
+    parallelChart.setOption(option);
+    // parallelChart.dispatchAction({
+    //     type: 'selectDataRange',
+    //     // 选取 20 到 40 的值范围
+    //     selected: [0.5, 0.8],
+    //     // // 取消选中第二段
+    //     // selected: { 1: false },
+    //     // // 取消选中类目 `优`
+    //     // selected: { '优': false }
+    // });
+      parallelChart.on('axisareaselected', function () {
+          var series0 = parallelChart.getModel().getSeries()[0];
+          var series1 = parallelChart.getModel().getSeries()[1];
+          var indices0 = series0.getRawIndicesByActiveState('active');
+          var indices1 = series1.getRawIndicesByActiveState('active');
+          console.log(indices0, indices1);
+          console.log(series0, series1);
+      });
+      parallelChart.on('mouseover', function (params) {
+          console.log(params);
+      });
     }
   }
 };

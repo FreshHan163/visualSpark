@@ -3,8 +3,7 @@ var models = require('../db');
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
-var $sql = require('../sql/sqlMap');
-var $sqlVisualSPark = require('../sql/sqlVisualSpark');
+var $sql = require('../sql/sqlDay');
 
 //连接数据库
 var conn = mysql.createConnection(models.mysql);
@@ -22,9 +21,9 @@ var jsonWrite = function(res, ret) {
   }
 };
 
-router.get('/getPieData', (req, res) => {
+router.get('/getThreeBar', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sql = $sql.chart.queryAll;
+  var sql = $sql.chart.queryThreeBar;
   var params = req.body;
   console.log(params);
   conn.query(sql, function(err, result) {
@@ -36,13 +35,12 @@ router.get('/getPieData', (req, res) => {
     }
   });
 });
-
-router.get('/getVisual', (req, res) => {
+router.get('/getSrcIpEntropyHours', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlVisual = $sqlVisualSPark.bigChunk.queryThreeBar;
+  var sql = $sql.chart.querySrcIpEntropy;
   var params = req.body;
   console.log(params);
-  conn.query(sqlVisual, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -51,12 +49,12 @@ router.get('/getVisual', (req, res) => {
     }
   });
 });
-router.get('/getPiePort', (req, res) => {
+router.get('/getSrcPortEntropyHours', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.queryPort;
+  var sql = $sql.chart.querySrcPortEntropy;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -65,12 +63,12 @@ router.get('/getPiePort', (req, res) => {
     }
   });
 });
-router.get('/getHeatMapSrcIp', (req, res) => {
+router.get('/getDestIpEntropyHours', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.queryMaxSrcIp;
+  var sql = $sql.chart.queryDestIpEntropy;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -79,12 +77,12 @@ router.get('/getHeatMapSrcIp', (req, res) => {
     }
   });
 });
-router.get('/getHeatMapSrcPort', (req, res) => {
+router.get('/getDestPortEntropyHours', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.queryMaxSrcPort;
+  var sql = $sql.chart.queryDestPortEntropy;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -93,12 +91,12 @@ router.get('/getHeatMapSrcPort', (req, res) => {
     }
   });
 });
-router.get('/getHeatMapDestIp', (req, res) => {
+router.get('/getParaTimeData', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.queryMaxDestIp;
+  var sql = $sql.chart.queryParaTimeData;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -107,12 +105,12 @@ router.get('/getHeatMapDestIp', (req, res) => {
     }
   });
 });
-router.get('/getHeatMapDestPort', (req, res) => {
+router.get('/getParaTotalBytes', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.queryMaxDestPort;
+  var sql = $sql.chart.queryParaTotalBytes;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -121,12 +119,12 @@ router.get('/getHeatMapDestPort', (req, res) => {
     }
   });
 });
-router.get('/getParaSrcIp', (req, res) => {
+router.get('/getParaTotalCount', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.queryParaSrcIp;
+  var sql = $sql.chart.queryParaTotalCount;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -135,12 +133,12 @@ router.get('/getParaSrcIp', (req, res) => {
     }
   });
 });
-router.get('/getParaSrcPort', (req, res) => {
+router.get('/getParaTotalPackets', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.queryParaSrcPort;
+  var sql = $sql.chart.queryParaTotalPackets;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -149,12 +147,12 @@ router.get('/getParaSrcPort', (req, res) => {
     }
   });
 });
-router.get('/getParaDestIp', (req, res) => {
+router.get('/getHeatSrcIp', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.queryParaDestIp;
+  var sql = $sql.chart.queryHeatSrcIp;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -163,12 +161,12 @@ router.get('/getParaDestIp', (req, res) => {
     }
   });
 });
-router.get('/getParaDestPort', (req, res) => {
+router.get('/getHeatSrcPort', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.queryParaDestPort;
+  var sql = $sql.chart.queryHeatSrcPort;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -177,12 +175,12 @@ router.get('/getParaDestPort', (req, res) => {
     }
   });
 });
-router.get('/getSunUdp', (req, res) => {
+router.get('/getHeatDestIp', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.querySunburstUdp;
+  var sql = $sql.chart.queryHeatDestIp;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -191,12 +189,12 @@ router.get('/getSunUdp', (req, res) => {
     }
   });
 });
-router.get('/getSunTcp', (req, res) => {
+router.get('/getHeatDestPort', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.querySunburstTcp;
+  var sql = $sql.chart.queryHeatDestPort;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -205,12 +203,12 @@ router.get('/getSunTcp', (req, res) => {
     }
   });
 });
-router.get('/getSunOther', (req, res) => {
+router.get('/getHeatSrcIpLink', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.querySunburstOther;
+  var sql = $sql.chart.queryHeatSrcIpLink;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -219,12 +217,12 @@ router.get('/getSunOther', (req, res) => {
     }
   });
 });
-router.get('/getTimeData', (req, res) => {
+router.get('/getHeatSrcPortLink', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.queryTimeData;
+  var sql = $sql.chart.queryHeatSrcPortLink;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -233,12 +231,12 @@ router.get('/getTimeData', (req, res) => {
     }
   });
 });
-router.get('/getIp', (req, res) => {
+router.get('/getHeatDestIpLink', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');
-  var sqlPort = $sqlVisualSPark.bigChunk.queryIp;
+  var sql = $sql.chart.queryHeatDestIpLink;
   var params = req.body;
   console.log(params);
-  conn.query(sqlPort, function(err, result) {
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -247,11 +245,54 @@ router.get('/getIp', (req, res) => {
     }
   });
 });
-router.post('/getIpDetail', (req, res) => {
-  let ip = req.body.srcIp;
-  var sql = $sqlVisualSPark.bigChunk.getIpDetail;
+router.get('/getHeatDestPortLink', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatDestPortLink;
   var params = req.body;
-  conn.query(sql, [ip], function(err, result) {
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatDestIpActivePort', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatDestIpActivePort;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatSrcIpActivePort', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatSrcIpActivePort;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getSrcIP', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.querySrcIp;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
     }

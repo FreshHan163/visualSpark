@@ -1,6 +1,7 @@
 // node 后端服务器入口文件
 const userApi = require('./api/userApi');
 const chartApi = require('./api/chartApi');
+const dayAPi = require('./api/dayApi');
 const fs = require('fs');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 // });
 app.use('/api', userApi);
 app.use('/api', chartApi);
+app.use('/api', dayAPi);
 // app.use('/', userApi);
 // app.use('/api/addUser', function(req, res) {
 //   res.send('Hello World!');

@@ -37,77 +37,28 @@
   margin-left: 0;
   // border: 1px solid red;
   .main-chart {
+    background-color: #333;
+    // background-color: rgb(11, 41, 93);
     .chart-content {
-      height: 600px;
-      width: 1300px;
+      // height: 300px;
+      // width: 1000px;
+      // border: 1px solid palegreen;
     }
   }
 }
 </style>
 <template>
   <div class="layout-wrap">
-    <header id="common-header">
-      <div class="head-wrap">
-        <h1 class="head-title">Netflow网络数据监控可视化</h1>
-      </div>
-    </header>
-    <nav id="nav">
-      <div class="main-nav">
-        <ul class="nav-list">
-          <li class="nav-item" :class="{active: true}">
-            <a class="item-view" href="#" @click="changeChart(1)">
-              <i class="iconfont icon-dashboard"></i>
-              <span class="item-span">Overall</span>
-            </a>
-          </li>
-          <li class="">
-            <a class="item-view" href="#" @click="changeChart(2)">
-              <i class="iconfont icon-report"></i>
-              <span class="item-span">Report</span>
-            </a>
-          </li>
-          <li class="">
-            <a class="item-view" href="#" @click="showConifg">
-              <i class="iconfont icon-settings"></i>
-              <span class="item-span">Config</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
     <main id="main">
       <div class="main">
         <div class="main-chart" id="main-chart">
-          <three-bar-chart class="chart-content" v-if="chart == 1"></three-bar-chart>
-          <detail-page v-if="chart == 2"></detail-page>
+          <three-bar-chart class="chart-content"></three-bar-chart>
+          <parallel-chart></parallel-chart>
         </div>
       </div>
     </main>
     <footer>
     </footer>
-    <!-- <div id="common-container">
-      <div id="mainChart-wrap" class="mainChart-wrap">
-        这是主图表区域，高度不确定
-        <div id="myChart" class="myChart"></div>
-      </div>
-      <div id="subChart-wrap" class="subChart-wrap">
-        <div class="subChart firstChart">
-          <div class="barChart" id="barChart">
-            1111图表
-          </div>
-        </div>
-        <div class="subChart secChart" id="secChart">
-          <div class="lineChart">
-            2222图表
-          </div>
-        </div>
-        <div class="subChart thirdChart">
-          <div class="radiusChart">
-            3333图表
-          </div>
-        </div>
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -118,6 +69,7 @@ import echarts from 'echarts';
 import threeBarChart from './threeBar';
 // import threeBarChart from './three';
 import DetailPage from './DetailPage';
+import ParallelChart from './ParallelChart';
 
 export default {
   name: 'HelloWorld',
@@ -136,7 +88,8 @@ export default {
   },
   components: {
     threeBarChart,
-    DetailPage
+    DetailPage,
+    ParallelChart
   },
   methods: {
     showConifg(){
@@ -179,7 +132,18 @@ export default {
   text-align: left;
   padding-left: 20px;
   line-height: 72px;
-  background-color: #E9EAEB;
+  background-color: black;
+  color: white;
+}
+.menu {
+  display: inline-block
+}
+.menu-item {
+  float: left;
+  color: white;
+  font-size: 16px;
+  background-color: blue;
+  line-height: 72px;
 }
 #common-sidebar-wrap {
     position: fixed;

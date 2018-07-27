@@ -13,57 +13,45 @@
 </style>
 <template>
   <div class="layout-wrap">
-    <div class="heatmap-chart" id="heatSrcPort" style="width: 400px;height: 400px;"></div>
+    <div class="heatmap-chart" :id="heatOption.ids" style="width: 400px;height: 400px;"></div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HeatmapSrcPort',
+  name: 'heatCom',
+  props: ['heatOption', 'heatDataObj'],
   data () {
     return {
-      msg: 'hello',
-      instances: []
     };
   },
   mounted () {
-    this.getHeatmapData();
+    this.drawHeatmap();
   },
   methods: {
-    getHeatmapData() {
-      this.$http.get('/api/getHeatSrcPort').then((res) => {
-        console.log('热力图--srcPort数据', res.body);
-        this.instances = res.body;
-      }).then(() => {
-        this.drawHeatmap();
-      });
-    },
     drawHeatmap () {
-      console.log(this.instances);
-      let instances = this.instances;
+      let instances = this.heatDataObj;
       let data = [];
       for (let i=0; i< 10; i++) {
-          for (let j=0; j < 10; j++) {
-            let arr = [];
-            arr.push(i);
-            arr.push(j);
-            data.push(arr);
-          }
+        for (let j=0; j < 10; j++) {
+          let arr = [];
+          arr.push(i);
+          arr.push(j);
+          data.push(arr);
         }
-        instances.forEach((item, index) => {
-          // data[index].push(item.srcPort);
-          data[index].push(item.srcAllBytes);
-        });
-        console.log('新data', data);
-      let heatmapChart = this.$echarts.init(document.getElementById('heatSrcPort'));
-      app.title = '源端口流量分布图';
+      }
+      instances.forEach((item, index) => {
+        data[index].push(item.totalItem);
+      });
+      console.log('heatmap组件数据', data);
+      let heatmapLinkSrcIp = this.$echarts.init(document.getElementById(`${this.heatOption.ids}`));
 
       var xData = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
       var yData = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
         let heatmapOption = {
           title: {
-            text: '源端口流量分布图',
+            text: this.heatOption.title,
             left: 'center',
             textStyle: {
               color: '#333',
@@ -73,9 +61,9 @@ export default {
             tooltip: {
                 position: 'top',
                 formatter: function(params) {
-                    var res = params.seriesName+'Top100流量<br/>';
+                    var res = params.seriesName+'Top100连接数<br/>';
                     let subIndex = params.data[0] * 10 + params.data[1];
-                    res += instances[subIndex].srcPort;
+                    res += instances[subIndex].dimension;
                     res += ':<br/>' + params.data[2];
                     return res;
                 }
@@ -111,18 +99,18 @@ export default {
               }
             },
             visualMap: {
-                min: 17000000,
-                max: 100000,
+                min: 0,
+                max: 5000,
                 calculable: true,
                 orient: 'horizontal',
                 left: 'center',
                 bottom: '3%',
                 inRange: {
-                  color: ['green','pink','blue','red'],
+                  color: ['red','blue','black'].reverse(),
                 }
             },
             series: [{
-                name: '总流量',
+                name: this.heatOption.seriesName,
                 type: 'heatmap',
                 data: data,
                 label: {
@@ -138,7 +126,7 @@ export default {
                 }
             }]
         };
-        heatmapChart.setOption(heatmapOption);
+        heatmapLinkSrcIp.setOption(heatmapOption);
     }
   }
 };

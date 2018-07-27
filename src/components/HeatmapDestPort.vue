@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     getHeatmapData() {
-      this.$http.get('/api/getHeatMapDestPort').then((res) => {
+      this.$http.get('/api/getHeatDestPort').then((res) => {
         console.log('热力图--destPort数据', res.body);
         this.instances = res.body;
       }).then(() => {
@@ -56,7 +56,7 @@ export default {
         });
         console.log('新data', data);
       let heatmapChart = this.$echarts.init(document.getElementById('heatDestPort'));
-      app.title = '目的端口流量分布图';
+      // app.title = '目的端口流量分布图';
 
       var xData = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
       var yData = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];

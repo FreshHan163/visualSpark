@@ -159,7 +159,7 @@ export default {
             },
             sort: null,
             levels: [{}, {
-                r0: 0,
+                r0: '25',
                 r: '35%',
                 itemStyle: {
                     borderWidth: 3
@@ -176,12 +176,12 @@ export default {
                 }
             }, {
                 r0: '35%',
-                r: '70%',
+                r: '50%',
                 label: {
                     align: 'right'
                 }
             }, {
-                r0: '70%',
+                r0: '50%',
                 r: '72%',
                 label: {
                     position: 'outside',

@@ -13,7 +13,7 @@
 </style>
 <template>
   <div class="layout-wrap">
-    <div class="heatmap-chart" id="heatmapChart" style="width: 400px;height: 400px;"></div>
+    <div class="heatmap-chart" id="heatmapChart" style="width: 400px;height: 100px;"></div>
   </div>
 </template>
 
@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     getHeatmapData() {
-      this.$http.get('/api/getHeatMapSrcIp').then((res) => {
+      this.$http.get('/api/getHeatSrcIp').then((res) => {
         console.log('热力图--srcIp数据', res.body);
         this.instances = res.body;
       }).then(() => {
@@ -40,10 +40,10 @@ export default {
     },
     drawHeatmap () {
       console.log(this.instances);
-      let instances = this.instances;
+      let instances = this.instances.slice(0, 20);
       let data = [];
       for (let i=0; i< 10; i++) {
-          for (let j=0; j < 10; j++) {
+          for (let j=0; j < 2; j++) {
             let arr = [];
             arr.push(i);
             arr.push(j);
@@ -59,7 +59,7 @@ export default {
       // app.title = '端口流量分布图';
 
       var xData = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      var yData = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+      var yData = [0, 1];
 
         let heatmapOption = {
           title: {
@@ -111,14 +111,14 @@ export default {
               }
             },
             visualMap: {
-                min: 17000000,
-                max: 100000,
+                min: 10000,
+                max: 100000000,
                 calculable: true,
                 orient: 'horizontal',
                 left: 'center',
-                bottom: '3%',
+                bottom: '0',
                 inRange: {
-                  color: ['green','pink','blue','red'],
+                  color: ['#9D409C','#7769CE','#45AE37'].reverse(),
                 }
             },
             series: [{
