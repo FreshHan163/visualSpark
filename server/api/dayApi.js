@@ -301,5 +301,247 @@ router.get('/getSrcIP', (req, res) => {
     }
   });
 });
+// 饼图
+router.get('/getSunTcp0619', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.querySunTcp0619;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getSunUdp0619', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.querySunUdp0619;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getSunOther0619', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.querySunOther0619;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+// 0214细节图
+router.get('/getSrcIp0214', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.querySrcIp0214;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getSrcIp0214_1016515', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.querySrcIp0214_1016515;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getDestIp0214', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryDestIp0214;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getDestPort0214_80', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryDestPort0214_80;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+// 热力图
+router.get('/getHeatSrcIp0214', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatSrcIp0214;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatSrcPort0214', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatSrcPort0214;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatDestIp0214', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatDestIp0214;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatDestPort0214', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatDestPort0214;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+// 气泡图
+router.get('/getHeatSrcIpLink0214', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatSrcIpLink0214;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatSrcPortLink0214', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatSrcPortLink0214;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatDestIpLink0214', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatDestIpLink0214;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatDestPortLink0214', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatDestPortLink0214;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatDestIpActivePort0214', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatDestIpActivePort0214;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatSrcIpActivePort0214', (req, res) => {
+  // res.send('THis is from /api/getPieData. pieChart!');
+  var sql = $sql.chart.queryHeatSrcIpActivePort0214;
+  var params = req.body;
+  console.log(params);
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
 
 module.exports = router;
