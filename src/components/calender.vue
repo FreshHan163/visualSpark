@@ -13,7 +13,7 @@
 </style>
 <template>
   <div class="layout-wrap">
-    <div class="heatmap-chart" id="heatmapChart" style="width: 1000px;height: 800px;"></div>
+    <div class="heatmap-chart" id="heatmapChart" style="width: 600px;height: 280px;"></div>
   </div>
 </template>
 
@@ -128,42 +128,42 @@ console.log(getVirtulData(2017));
               min: 0,
               max: 1000,
               calculable: true,
-              seriesIndex: [2, 3, 4],
+              seriesIndex: [1, 2, 3],
               orient: 'horizontal',
               left: '55%',
-              bottom: 20
+              bottom: 10
           }, {
               min: 0,
               max: 1000,
-              inRange: {
-                  color: ['grey'],
-                  opacity: [0, 0.3]
-              },
-              controller: {
-                  inRange: {
-                      opacity: [0.3, 0.6]
-                  },
-                  outOfRange: {
-                      color: '#ccc'
-                  }
-              },
+              // inRange: {
+              //     color: ['grey'],
+              //     opacity: [0, 0.3]
+              // },
+              // controller: {
+              //     inRange: {
+              //         opacity: [0.3, 0.6]
+              //     },
+              //     outOfRange: {
+              //         color: '#ccc'
+              //     }
+              // },
               calculable: true,
-              seriesIndex: [1],
+              seriesIndex: [0],
               orient: 'horizontal',
               left: '10%',
-              bottom: 20
+              bottom: 10
           }],
 
           calendar: [
           {
               orient: 'vertical',
               yearLabel: {
-                  margin: 40,
+                  // margin: 40,
                   show: false
               },
               monthLabel: {
                   nameMap: 'cn',
-                  margin: 20,
+                  // margin: 20,
                   show: false
               },
               dayLabel: {
@@ -171,7 +171,25 @@ console.log(getVirtulData(2017));
                   show: false,
                   firstDay: 1
               },
-              cellSize: 40,
+              cellSize: 25,
+              // range: ['2017-04-03', '2017-04-22'],
+          },
+          {
+              orient: 'vertical',
+              yearLabel: {
+                  margin: 10,
+                  show: false
+              },
+              monthLabel: {
+                  margin: 20,
+                  show: false
+              },
+              dayLabel: {
+                  firstDay: 1,
+                  show: false,
+              },
+              cellSize: 25,
+              left: 300,
               range: ['2017-04-03', '2017-04-22'],
           },
           {
@@ -188,26 +206,8 @@ console.log(getVirtulData(2017));
                   firstDay: 1,
                   show: false,
               },
-              cellSize: 40,
-              left: 460,
-              range: ['2017-04-03', '2017-04-22'],
-          },
-          {
-              orient: 'vertical',
-              yearLabel: {
-                  margin: 40,
-                  show: false
-              },
-              monthLabel: {
-                  margin: 20,
-                  show: false
-              },
-              dayLabel: {
-                  firstDay: 1,
-                  show: false,
-              },
-              cellSize: 40,
-              top: 350,
+              cellSize: 25,
+              top: 170,
               range: ['2017-04-03', '2017-04-22'],
           },
           {
@@ -225,29 +225,46 @@ console.log(getVirtulData(2017));
                   margin: 20,
                   show: false
               },
-              cellSize: 40,
-              top: 350,
-              left: 460,
+              cellSize: 25,
+              top: 170,
+              left: 300,
               range: ['2017-04-03', '2017-04-22'],
           }],
-
-          series: [ {
-              type: 'effectScatter',
+          series: [
+          //   {
+          //     type: 'effectScatter',
+          //     coordinateSystem: 'calendar',
+          //     calendarIndex: 0,
+          //     symbolSize: function (val) {
+          //         return val[1] / 40;
+          //     },
+          //     data: getVirtulData(2017)
+          // },
+           {
+              type: 'heatmap',
               coordinateSystem: 'calendar',
-              calendarIndex: 1,
-              symbolSize: function (val) {
-                  return val[1] / 40;
-              },
+              calendarIndex: 0,
               data: getVirtulData(2017)
           },
           {
-              type: 'scatter',
+              type: 'heatmap',
+              coordinateSystem: 'calendar',
+              calendarIndex: 1,
+              data: getVirtulData(2017)
+          },
+          // {
+          //     type: 'effectScatter',
+          //     coordinateSystem: 'calendar',
+          //     calendarIndex: 2,
+          //     symbolSize: function (val) {
+          //         return val[1] / 40;
+          //     },
+          //     data: getVirtulData(2017)
+          // },
+          {
+              type: 'heatmap',
               coordinateSystem: 'calendar',
               calendarIndex: 2,
-              symbolSize: function (val) {
-                  console.log(val);
-                  return val[1] / 60;
-              },
               data: getVirtulData(2017)
           },
            {

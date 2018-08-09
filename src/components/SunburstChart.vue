@@ -47,21 +47,21 @@ export default {
       });
     },
     getSunTcpData() {
-      this.$http.get('/api/getSunTcp').then((res) => {
+      this.$http.get('/api/getSunTcp0619').then((res) => {
         console.log('太阳图tcp--数据', res.body);
         res.body.forEach(item => {
-            item.name = item.srcPort;
-            item.value = item.srcAllBytes;
+            item.name = item.destPort;
+            item.value = item.destAllBytes;
         });
         this.tcpData = res.body;
       });
     },
     getSunUdpData() {
-      this.$http.get('/api/getSunUdp').then((res) => {
+      this.$http.get('/api/getSunUdp0619').then((res) => {
         console.log('太阳图udp--数据', res.body);
         res.body.forEach(item => {
-            item.name = item.srcPort;
-            item.value = item.srcAllBytes;
+            item.name = item.destPort;
+            item.value = item.destAllBytes;
         });
         this.udpData = res.body;
       }).then(() => {
@@ -70,11 +70,11 @@ export default {
       });
     },
     getSunOtherData() {
-      this.$http.get('/api/getSunOther').then((res) => {
+      this.$http.get('/api/getSunOther0619').then((res) => {
         console.log('太阳图other--数据', res.body);
         res.body.forEach(item => {
-            item.name = item.srcPort;
-            item.value = item.srcAllBytes;
+            item.name = item.destPort;
+            item.value = item.destAllBytes;
         });
         this.otherData = res.body;
       });
@@ -84,28 +84,69 @@ export default {
       var data = [{
           name: 'TCP',
           itemStyle: {
-              // color: '#da0d68'
+              color: '#0aa3b5'
           },
-          children: this.tcpData
-          // children: [{
-          //     name: 'Black Tea',
-          //     value: 1,
-          //     itemStyle: {
-          //         // color: '#975e6d'
-          //     }
-          // }, {
-          //     name: 'Floral',
-          //     value: 2,
-          //     itemStyle: {
-          //         // color: '#e0719c'
-          //     }
-          // }]
+          // children: this.tcpData
+          children: [{
+              name: '80',
+              value: 100,
+              itemStyle: {
+                  color: '#975e6d'
+              },
+              children: [{
+                name: '80',
+                value: 100,
+                itemStyle: {
+                    color: '#975e6d'
+                },
+              }]
+          }, {
+              name: '123',
+              value: 20,
+              itemStyle: {
+                  color: '#e0719c'
+              },
+              children: [{
+                name: '80',
+                value: 100,
+                itemStyle: {
+                    color: 'black'
+                }
+              }]
+          }]
       }, {
           name: 'UDP',
           itemStyle: {
-              // color: '#da1d23'
+              color: '#e65832'
           },
-          children: this.udpData
+          // children: this.udpData
+          children: [{
+              name: '80',
+              value: 100,
+              itemStyle: {
+                  color: '#975e6d'
+              },
+              children: [{
+                name: '80',
+                value: 100,
+                itemStyle: {
+                    color: '#975e6d'
+                },
+              }]
+          }, {
+              name: '123',
+              value: 20,
+              itemStyle: {
+                  color: '#e0719c'
+              },
+              children: [{
+                name: '80',
+                value: 100,
+                itemStyle: {
+                    color: 'black'
+                }
+              }]
+          }]
           // children: [{
           //     name: 'Berry',
           //     value: 2,
@@ -128,15 +169,35 @@ export default {
       }, {
         name: 'OTHER',
         itemStyle: {
-          // color: 'blue'
+          color: '#ebb40f'
         },
         children: [{
-          name: 'OTHER',
-          value: 8,
-          itemStyle: {
-              // color: '#b09733'
-          }
-        }]
+              name: '80',
+              value: 100,
+              itemStyle: {
+                  color: '#975e6d'
+              },
+              children: [{
+                name: '80',
+                value: 100,
+                itemStyle: {
+                    color: '#975e6d'
+                },
+              }]
+          }, {
+              name: '123',
+              value: 20,
+              itemStyle: {
+                  color: '#e0719c'
+              },
+              children: [{
+                name: '80',
+                value: 100,
+                itemStyle: {
+                    color: 'black'
+                }
+              }]
+          }]
       }];
       let sunburstOption = {
         title: {
@@ -159,7 +220,7 @@ export default {
             },
             sort: null,
             levels: [{}, {
-                r0: '25',
+                r0: '15%',
                 r: '35%',
                 itemStyle: {
                     borderWidth: 3
@@ -176,13 +237,13 @@ export default {
                 }
             }, {
                 r0: '35%',
-                r: '50%',
+                r: '70%',
                 label: {
                     align: 'right'
                 }
             }, {
-                r0: '50%',
-                r: '72%',
+                r0: '70%',
+                r: '75%',
                 label: {
                     position: 'outside',
                     padding: 3,

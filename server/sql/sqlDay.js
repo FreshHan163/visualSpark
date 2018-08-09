@@ -3,56 +3,56 @@
 var sqlDay = {
   // 用户
   chart: {
-    queryThreeBar: 'SELECT * FROM hoursThreeBar',
+    queryThreeBar: 'SELECT * FROM hoursThreeBarTwo',
     querySrcIpEntropy: `SELECT
     hours,
     protocolCode,
-    srcIpEntropy/(select max(srcIpEntropy) from srcIpEntropy) as srcIpEntropyTotal
+    srcIpEntropy/(select max(srcIpEntropy) from dw_para_srcIp_entropy_hours_TwoWeek) as srcIpEntropyTotal
   FROM
-    srcIpEntropy
+  dw_para_srcIp_entropy_hours_TwoWeek
   `,
   querySrcPortEntropy: `SELECT
 	hours,
 	protocolCode,
-	srcPortEntropy/(select max(srcPortEntropy) from srcPortEntropy) as srcPortEntropyTotal
+	srcPortEntropy/(select max(srcPortEntropy) from dw_para_srcPort_entropy_hours_TwoWeek) as srcPortEntropyTotal
 FROM
-	srcPortEntropy
+dw_para_srcPort_entropy_hours_TwoWeek
 `,
   queryDestIpEntropy: `
   SELECT
 	hours,
 	protocolCode,
-	destIpEntropy/(select max(destIpEntropy) from destIpEntropy) as destIpEntropyTotal
+	destIpEntropy/(select max(destIpEntropy) from dw_para_destIp_entropy_hours_TwoWeek) as destIpEntropyTotal
 FROM
-	destIpEntropy
+dw_para_destIp_entropy_hours_TwoWeek
   `,
   queryDestPortEntropy: `SELECT
 	hours,
 	protocolCode,
-	destPortEntropy/(select max(destPortEntropy) from destPortEntropy) as destPortEntropyTotal
+	destPortEntropy/(select max(destPortEntropy) from dw_para_destPort_entropy_hours_TwoWeek) as destPortEntropyTotal
 FROM
-destPortEntropy
+dw_para_destPort_entropy_hours_TwoWeek
 `,
   queryParaTimeData: `select *
-  FROM	paraTimeTable`,
+  FROM	dw_para_time_hours`,
   queryParaTotalCount: `SELECT
 	hours,
 	protocolCode,
-	linkCount / ((select max(linkCount) from totalCount) ) as count
+	linkCount / ((select max(linkCount) from dw_para_totalLinkCount_hours_TwoWeek) ) as count
 from
-	totalCount`,
+dw_para_totalLinkCount_hours_TwoWeek`,
   queryParaTotalBytes: `SELECT
 	hours,
 	protocolCode,
-	totalBytes / ((select max(totalBytes) from totalBytes) ) as bytes
+	totalBytes / ((select max(totalBytes) from dw_para_totalBytes_hours_TwoWeek_src) ) as bytes
 from
-	totalBytes`,
+dw_para_totalBytes_hours_TwoWeek_src`,
   queryParaTotalPackets: `SELECT
 	hours,
 	protocolCode,
-	totalPackets / ((select max(totalPackets) from totalPackets) ) as packets
+	totalPackets / ((select max(totalPackets) from dw_para_totalPackets_hours_TwoWeek_src) ) as packets
 from
-  totalPackets`,
+dw_para_totalPackets_hours_TwoWeek_src`,
   queryHeatSrcIp: `select
 	*
 from
@@ -72,6 +72,26 @@ queryHeatDestPort: `select
 *
 from
 heatDestPort0619
+limit 0, 100`,
+queryHeatSrcIp0214: `select
+*
+from
+dw_heat_srcIp_0214
+limit 0, 100`,
+queryHeatSrcPort0214: `select
+*
+from
+dw_heat_srcPort_0214
+limit 0, 100`,
+queryHeatDestIp0214: `select
+*
+from
+dw_heat_destIp_0214
+limit 0, 100`,
+queryHeatDestPort0214: `select
+*
+from
+dw_heat_destPort_0214
 limit 0, 100`,
 queryHeatSrcIpLink: `select
 *
@@ -114,7 +134,93 @@ srcIp = '10.9.81.5'
 GROUP BY
 hours
 order by
-hours`
+hours`,
+querySunTcp0619: `SELECT * FROM sunTcp0619`,
+querySunUdp0619: `SELECT * FROM sunUdp0619`,
+querySunOther0619: `SELECT * FROM sunOther0619`,
+querySrcIp0619: `select
+*
+from
+dw_Six19_srcIp_10_7_5_5_hours
+order by
+hours
+ASC`,
+querySrcPort0619_51358: `
+select
+*
+from
+dw_Six19_srcPort_51358_hours
+order by
+hours
+ASC`,
+queryDestIp0619_17220015: `select
+*
+from
+dw_Six19_destIp_172_20_0_15_hours
+order by
+hours
+ASC`,
+queryDestIp0619_1722003: `select
+*
+from
+dw_Six19_destIp_172_20_0_3_hours
+order by
+hours
+ASC`,
+queryHeatSrcIpLink0214: `select
+*
+from
+dw_pubble_srcIp_link_0214
+limit 0, 100`,
+queryHeatSrcPortLink0214: `select
+*
+from
+dw_pubble_srcPort_link_0214
+limit 0, 100`,
+queryHeatDestIpLink0214: `select
+*
+from
+dw_pubble_destIp_link_0214
+limit 0, 100`,
+queryHeatDestPortLink0214: `select
+*
+from
+dw_pubble_destPort_link_0214
+limit 0, 100`,
+queryHeatDestIpActivePort0214: `select
+*
+from
+dw_pubble_destIp_activePort_0214
+limit 0, 100`,
+queryHeatSrcIpActivePort0214: `select
+*
+from
+dw_pubble_srcIp_activePort_0214
+limit 0, 100`,
+queryDestIp0214: `
+select
+	*
+from
+	dw_Two14_destIp_172_30_0_4_hours
+order by
+	hours
+ASC`,
+querySrcIp0214: `
+select
+	*
+from
+	dw_Two14_srcIp_10_6_6_14_hours
+order by
+	hours
+ASC`,
+queryDestPort0214_80: `
+select
+	*
+from
+	dw_Two14_destPort_80_hours
+order by
+	hours
+ASC`
   }
 }
 module.exports = sqlDay;

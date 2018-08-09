@@ -26,58 +26,18 @@ export default {
   props: ['instances'],
   data () {
     return {
-      msg: 'hello',
-      // instances: [],
-      // heatSrcIpLinkData: [],
-      // heatSrcPortLinkData: []
+      msg: 'hello'
     };
   },
   mounted () {
     this.drawBubble();
-    // this.getHeatSrcIpLink();
-    // this.getHeatSrcPortLink();
   },
   methods: {
-    // getHeatSrcIpLink() {
-    //   this.$http.get('/api/getHeatSrcIpLink').then((res) => {
-    //     res.body.forEach((item, index) => {
-    //       item.totalItem = item.srcIpLinkCount;
-    //       item.dimension = item.srcIp;
-    //       item.yAxis = 1;
-    //       item.xAxis = index + 1;
-    //       this.heatSrcIpLinkData.push(Object.values(item).reverse());
-    //     });
-    //     this.heatSrcIpLinkData = this.heatSrcIpLinkData.slice(0, 20);
-    //     this.instances.push(this.heatSrcIpLinkData);
-    //     console.log('热力图--srcIp数据--连接数', this.heatSrcIpLinkData);
-    //   });
-    // },
-    // getHeatSrcPortLink() {
-    //   this.$http.get('/api/getHeatSrcPortLink').then((res) => {
-    //     res.body.forEach((item, index) => {
-    //       item.totalItem = item.srcPortLinkCount;
-    //       item.dimension = item.srcPort;
-    //       item.yAxis = 2;
-    //       item.xAxis = index + 1;
-    //       this.heatSrcPortLinkData.push(Object.values(item).reverse());
-    //     });
-    //     this.heatSrcPortLinkData = this.heatSrcPortLinkData.slice(0, 20);
-    //     this.instances.push(this.heatSrcPortLinkData);
-    //     console.log('top图连接数', this.instances);
-    //   });
-    // },
     drawBubble() {
       let topChart = echarts.init(this.$refs.topChart);
       var data = this.instances;
       console.log('气泡图', data);
       let topOption = {
-          // backgroundColor: new echarts.graphic.RadialGradient(0.3, 0.3, 0.8, [{
-          //     offset: 0,
-          //     color: '#f7f8fa'
-          // }, {
-          //     offset: 1,
-          //     color: '#cdd0d5'
-          // }]),
           title: {
               text: 'Top-20气泡图',
               left: 'center'

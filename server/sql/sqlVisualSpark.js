@@ -339,7 +339,7 @@ GROUP BY hours`,
     FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00') AS hours,
     SUM(srcTotalBytes) as bytes, SUM(srcPacketCount) as packets
   FROM
-    challenge
+    nfChunk
   WHERE
     srcIp = ?
   GROUP BY hours`

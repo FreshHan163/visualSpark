@@ -2,10 +2,11 @@
 <style lang="less">
   .layout-wrap {
     height: 100%;
+    width: 100%;
     // color: white;
     .three-bar-chart {
-      width: 1000px;
-      height: 400px;
+      width: 1300px;
+      height: 300px;
       margin: 0 auto;
     }
   }
@@ -94,37 +95,32 @@ export default {
               // max: 190000000,
               max: 4300000000,
               min: 0,
-              right: 10,
+              type: 'piecewise',
+              right: 100,
               bottom: 10,
               dimension: 'srcAllBytes',
               inRange: {
-                  color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+                  // color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+                  color: ['#d94e5d','#eac736','#50a3ba'].reverse(),
               },
-              // 超出最大值以后的特殊显示
-              // outOfRange: {
-              //     color: ['#121122', 'rgba(3,4,5,0.4)', 'red'],
-              //     symbolSize: [30, 100]
-              // }
           },
           xAxis3D: {
               type: 'category',
               name: '',
               axisLabel: {
                 show: true,
-                margin: 20,
+                margin: 5,
                 textStyle: {
                   color: 'white'
                 },
                 interval: 12,
                 formatter: function (value, index) {
-                    // 格式化成月/日，只在第一个刻度显示年份
+                    // 格式化成月/日，小时:分钟
                     var date = new Date(value);
-                    var texts = [(date.getMonth() + 1), date.getDate()];
+                    var days = [(date.getMonth() + 1), date.getDate()];
                     var hours = [date.getHours(), date.getMinutes()];
-                    if (index === 0) {
-                        // texts.unshift(date.getYear());
-                    }
-                    var time = texts.join('/') + ' ' + hours.join(':') + '0';
+                    var time = '';
+                      time = days.join('/') + '\n' + hours.join(':') + '0';
                     return time;
                 }
               }
@@ -176,6 +172,14 @@ export default {
                   ambient: {
                       intensity: 0.3
                   }
+              },
+              axisPointer: {
+                show: true,
+                lineStyle: {
+                  color: 'red',
+                  width: 2,
+                  type: 'dashed'
+                }
               }
           },
           dataset: {
@@ -200,7 +204,6 @@ export default {
                     label: 2
                 },
                 label: {
-                  // formatter: '{c0}'
                   formatter: function (params) {
                     return params.data[2];
                   }
@@ -216,21 +219,26 @@ export default {
                         }
                     },
                     itemStyle: {
-                        color: '#64A0B7'
+                        color: 'green',
+                        shadowBlur: 200,
+                        opacity: 0.3,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)',
+                        shadowOffsetX: 3,
+                        shadowOffsetY: 3,
                     }
                 }
               }
           ]
       };
       threeBarChart.setOption(threeBarption);
-    //   threeBarChart.dispatchAction({
-    //     type: 'selectDataRange',
-    //     // 选取 20 到 40 的值范围
-    //     selected: [200000000, 4000000000],
-    //     // 取消选中第二段
-    //     // selected: { 1: false },
-    //     // 取消选中类目 `优`
-    //     // selected: { '优': false }
+      // threeBarChart.dispatchAction({
+        type: 'selectDataRange',
+        // 选取 20 到 40 的值范围
+        // selected: [3000000000, 40000000000],
+        // 取消选中第二段
+        // selected: { 1: false },
+        // 取消选中类目 `优`
+        // selected: { '优': false }
     // });
       threeBarChart.on('mouseover', function (parmas) {
         console.log(parmas);

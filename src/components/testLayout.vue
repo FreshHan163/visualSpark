@@ -107,15 +107,15 @@ export default {
       });
     },
     setHeight() {
-      let h = document.documentElement.clientHeight,
-          w = document.documentElement.clientWidth;
-      let chartDom = document.getElementById('main-chart');
-      let navDom = document.getElementById('nav');
-      console.log('当前浏览器高度', h);
-      console.log('当前浏览器宽度', w);
-      navDom.style.height = h - 75 + 'px';
-      chartDom.style.height = h - 75 + 'px';
-      chartDom.style.width = w - 80 + 'px';
+      // let h = document.documentElement.clientHeight,
+      //     w = document.documentElement.clientWidth;
+      // let chartDom = document.getElementById('main-chart');
+      // // let navDom = document.getElementById('nav');
+      // console.log('当前浏览器高度', h);
+      // console.log('当前浏览器宽度', w);
+      // // navDom.style.height = h - 75 + 'px';
+      // chartDom.style.height = h - 75 + 'px';
+      // chartDom.style.width = w + 'px';
     }
   }
 };

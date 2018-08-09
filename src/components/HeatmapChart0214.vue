@@ -53,7 +53,7 @@ export default {
       });
     },
     getHeatSrcIp() {
-      this.$http.get('/api/getHeatSrcIp').then((res) => {
+      this.$http.get('/api/getHeatSrcIp0214').then((res) => {
         console.log(res.body);
         console.log(res.body.slice(0, 20));
         this.heatSrcIpData = res.body.slice(0, 20);
@@ -62,21 +62,21 @@ export default {
       });
     },
     getHeatSrcPort() {
-      this.$http.get('/api/getHeatSrcPort').then((res) => {
+      this.$http.get('/api/getHeatSrcPort0214').then((res) => {
         this.heatSrcPortData = res.body.slice(0, 20);
         console.log('热力图--srcIp数据', this.heatSrcPortData);
         this.instances = Object.assign(this.instances, {srcPort: res.body.slice(0, 5)});
       });
     },
     getHeatDestIp() {
-      this.$http.get('/api/getHeatDestIp').then((res) => {
+      this.$http.get('/api/getHeatDestIp0214').then((res) => {
         this.heatDestIpData = res.body.slice(0, 20);
         console.log('热力图--srcIp数据', this.heatDestIpData);
         this.instances = Object.assign(this.instances, {destIp: res.body.slice(0, 5)});
       });
     },
     getHeatDestPort() {
-      this.$http.get('/api/getHeatDestPort').then((res) => {
+      this.$http.get('/api/getHeatDestPort0214').then((res) => {
         this.heatDestPortData = res.body.slice(0, 20);
         console.log('热力图--srcIp数据', this.heatDestPortData);
         this.instances = Object.assign(this.instances, {destPort: res.body.slice(0, 5)});
@@ -121,16 +121,20 @@ export default {
         }
       }
       this.heatSrcIpData.forEach((item, index) => {
-        srcIpData[index].push(item.srcAllBytes);
+        // srcIpData[index].push(item.srcAllBytes);
+        srcIpData[index].push(item.srcBytes);
       });
       this.heatSrcPortData.forEach((item, index) => {
-        srcPortData[index].push(item.srcAllBytes);
+        // srcPortData[index].push(item.srcAllBytes);
+        srcPortData[index].push(item.srcBytes);
       });
       this.heatDestIpData.forEach((item, index) => {
         destIpData[index].push(item.destAllBytes);
+        // destIpData[index].push(item.destBytes);
       });
       this.heatDestPortData.forEach((item, index) => {
-        destPortData[index].push(item.destAllBytes);
+        // destPortData[index].push(item.destAllBytes);
+        destPortData[index].push(item.destBytes);
       });
       // this.instances = Object.assign({}, {srcIp: srcIpData}, {srcPort: srcPortData}, {destIp: destIpData}, {destPort: destPortData});
       console.log('生成instances', this.instances);

@@ -13,6 +13,48 @@
         -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.3);
         box-shadow: 0 1px 1px rgba(0,0,0,.3);
       }
+      .report-wrap {
+        height: 400px;
+        margin: 0 10px 20px 10px;
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.3);
+        box-shadow: 0 1px 1px rgba(0,0,0,.3);
+        .report-list-top {
+          display: inline-block;
+          width: 200px;
+          text-align: left;
+          margin: 15px 0;
+          li {
+            padding: 5px 5px;
+          }
+          .src-ip-circle {
+            list-style-type: disc;
+            list-style-position: inside;
+            line-height: 20px;
+            font-size: 30px;
+            span {
+              color: black;
+              vertical-align: top;
+              line-height: 20px;
+              font-size: 12px;
+            }
+          }
+        }
+        .report-list-top:first-of-type > .src-ip-circle{
+          color: #C5473D;
+        }
+        .report-list-top:nth-of-type(2) > .src-ip-circle {
+          color: #384B5A;
+        }
+        .report-list-top:nth-of-type(3) > .src-ip-circle {
+          color: #7AAEB6;
+        }
+        .report-list-top:nth-of-type(4) > .src-ip-circle {
+          color: #DD9375;
+        }
+      }
   // border: 1px solid green;
   .detail-row {
     .detail-col {
@@ -46,41 +88,55 @@
     <Row>
       <Col span="16">
         <div class="chart-wrap">
+          <heatmap-chart @transferReport="transferReport"></heatmap-chart>
+        </div>
+      </Col>
+      <Col span="8">
+        <div class="report-wrap">
+          <!-- <Table :columns="srcIpColumns" :data="heatSrcIpData" width="300"></Table> -->
+          <ul class="report-list-top">
+            <li class="src-ip-circle"><span>源IP Top-5</span></li>
+            <li v-for="(item, index) in heatSrcIpData" :key="index">
+              {{item.srcIp}}：{{item.srcBytes}}
+            </li>
+          </ul>
+          <ul class="report-list-top">
+            <li class="src-ip-circle"><span>目的IP Top-5</span></li>
+            <li v-for="(item, index) in heatDestIpData" :key="index">
+              {{item.destIp}}：{{item.destAllBytes}}
+            </li>
+          </ul>
+          <ul class="report-list-top">
+            <li class="src-ip-circle"><span>源端口 Top-5</span></li>
+            <li v-for="(item, index) in heatSrcPortData" :key="index">
+              {{item.srcPort}}：{{item.srcBytes}}
+            </li>
+          </ul>
+          <ul class="report-list-top">
+            <li class="src-ip-circle"><span>目的端口 Top-5</span></li>
+            <li v-for="(item, index) in heatDestPortData" :key="index">
+              {{item.destPort}}：{{item.destBytes}}
+            </li>
+          </ul>
+        </div>
+      </Col>
+    </Row>
+    <Row>
+      <Col span="16">
+        <div class="chart-wrap">
           <top-chart :instances="instances"></top-chart>
         </div>
       </Col>
       <Col span="8">
-        <div class="chart-wrap">
-          这里是列表显示
+        <div class="report-wrap">
+          <rose-chart></rose-chart>
         </div>
       </Col>
     </Row>
     <Row>
-      <Col span="6">
-        <div class="chart-wrap">
-          <heatmap-chart></heatmap-chart>
-        </div>
-      </Col>
-      <Col span="6">
-        <div class="chart-wrap">
-          <heatmap-src-port></heatmap-src-port>
-        </div>
-      </Col>
-      <Col span="6">
-        <div class="chart-wrap">
-          <heatmap-dest-ip></heatmap-dest-ip>
-        </div>
-      </Col>
-      <Col span="6">
-        <div class="chart-wrap">
-          <heatmap-dest-port></heatmap-dest-port>
-        </div>
-      </Col>
-    </Row>
-    <Row>
-      <Col span="24">
-        <div class="chart-wrap" style="width: 1000px; height: 400px;">
-          <!-- <line-chart></line-chart> -->
+      <Col span="16">
+        <div class="chart-wrap" style="height: 1000px">
+          <line-chart></line-chart>
         </div>
       </Col>
     </Row>
@@ -89,15 +145,17 @@
 
 <script>
 import PieChart from './PieChart'
-import LineChart from './lineIp'
-import HeatmapChart from './HeatmapChart'
-import HeatmapSrcPort from './HeatmapSrcPort'
-import HeatmapDestIp from './HeatmapDestIp'
-import HeatmapDestPort from './HeatmapDestPort'
+import LineChart from './lineIp0214'
+// import HeatmapChart from './HeatmapChart'
+import HeatmapChart from './HeatmapChart0214'
+// import HeatmapSrcPort from './HeatmapSrcPort'
+// import HeatmapDestIp from './HeatmapDestIp'
+// import HeatmapDestPort from './HeatmapDestPort'
 import ParallelChart from './ParallelChart'
 import SunburstChart from './SunburstChart'
-import HeatmapCom from './HeatmapCom'
-import TopChart from './topChart'
+// import HeatmapCom from './HeatmapCom'
+import TopChart from './topChart0214'
+import RoseChart from './Rose'
 // import HeatmapLinkSrcIp from './HeatmapLinkSrcIp'
 // import HeatmapLinkSrcPort from './HeatmapLinkSrcPort'
 // import HeatmapLinkDestIp from './HeatmapLinkDestIp'
@@ -149,7 +207,22 @@ export default {
         seriesName: '目的IP活跃端口数'
       },
       heatDestIpActivePortData: [],
-      instances: []
+      instances: [],
+      reportData: {},
+      heatSrcIpData: [],
+      heatSrcPortData: [],
+      heatDestIpData: [],
+      heatDestPortData: [],
+      srcIpColumns: [
+        {
+            title: 'Name',
+            key: 'srcIp'
+        },
+        {
+            title: 'Name',
+            key: 'srcAllBytes'
+        },
+      ]
     };
   },
   components: {
@@ -158,11 +231,12 @@ export default {
     HeatmapChart,
     ParallelChart,
     SunburstChart,
-    HeatmapSrcPort,
-    HeatmapDestIp,
-    HeatmapDestPort,
-    HeatmapCom,
-    TopChart
+    // HeatmapSrcPort,
+    // HeatmapDestIp,
+    // HeatmapDestPort,
+    // HeatmapCom,
+    TopChart,
+    RoseChart
   },
   created() {
     this.getHeatSrcIpLink();
@@ -173,8 +247,30 @@ export default {
     this.getHeatDestIpActivePort();
   },
   methods: {
+    transferReport(val) {
+      console.log('传回来report数据', val);
+      this.reportData = val;
+      this.heatSrcIpData = val.srcIp;
+      this.heatSrcPortData = val.srcPort;
+      this.heatDestIpData = val.destIp;
+      this.heatDestPortData = val.destPort;
+      console.log('排序后的srcIP', this.heatSrcIpData);
+    },
+    compare(prop) {
+        return function (obj1, obj2) {
+            var val1 = obj1.prop;
+            var val2 = obj2.prop;
+            if (val1 < val2) {
+                return 1;
+            } else if (val1 > val2) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    },
     getHeatSrcIpLink() {
-      this.$http.get('/api/getHeatSrcIpLink').then((res) => {
+      this.$http.get('/api/getHeatSrcIpLink0214').then((res) => {
         res.body.forEach((item, index) => {
           item.totalItem = item.srcIpLinkCount;
           item.dimension = item.srcIp;
@@ -188,7 +284,7 @@ export default {
       });
     },
     getHeatSrcPortLink() {
-      this.$http.get('/api/getHeatSrcPortLink').then((res) => {
+      this.$http.get('/api/getHeatSrcPortLink0214').then((res) => {
         res.body.forEach((item, index) => {
           item.totalItem = item.srcPortLinkCount;
           item.dimension = item.srcPort;
@@ -208,7 +304,7 @@ export default {
       });
     },
     getHeatDestIpLink() {
-      this.$http.get('/api/getHeatDestIpLink').then((res) => {
+      this.$http.get('/api/getHeatDestIpLink0214').then((res) => {
         res.body.forEach((item, index) => {
           item.totalItem = item.destIpLinkCount;
           item.dimension = item.destIp;
@@ -228,7 +324,7 @@ export default {
       });
     },
     getHeatDestPortLink() {
-      this.$http.get('/api/getHeatDestPortLink').then((res) => {
+      this.$http.get('/api/getHeatDestPortLink0214').then((res) => {
         res.body.forEach((item, index) => {
           item.totalItem = item.destPortLinkCount;
           item.dimension = item.destPort;
@@ -248,7 +344,7 @@ export default {
       });
     },
     getHeatSrcIpActivePort() {
-      this.$http.get('/api/getHeatSrcIpActivePort').then((res) => {
+      this.$http.get('/api/getHeatSrcIpActivePort0214').then((res) => {
         res.body.forEach((item, index) => {
           item.totalItem = item.srcIpActivePort;
           item.dimension = item.srcIp;
@@ -268,7 +364,7 @@ export default {
       });
     },
     getHeatDestIpActivePort() {
-      this.$http.get('/api/getHeatDestIpActivePort').then((res) => {
+      this.$http.get('/api/getHeatDestIpActivePort0214').then((res) => {
         res.body.forEach((item, index) => {
           item.totalItem = item.destIpActivePort;
           item.dimension = item.destIp;
