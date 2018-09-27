@@ -14,7 +14,7 @@
 <template>
   <div class="layout-wrap">
     <!-- <h1>饼图展示</h1> -->
-    <div class="top-chart" ref="topChart" style="width: 850px;height: 400px;"></div>
+    <div class="top-chart" ref="topChart" style="width: 850px;height: 500px;"></div>
   </div>
 </template>
 

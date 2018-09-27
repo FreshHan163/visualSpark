@@ -129,14 +129,15 @@
       </Col>
       <Col span="8">
         <div class="report-wrap">
-          <rose-chart></rose-chart>
+          <line-chart></line-chart>
+          <!-- <rose-chart></rose-chart> -->
         </div>
       </Col>
     </Row>
     <Row>
-      <Col span="16">
-        <div class="chart-wrap" style="height: 1000px">
-          <line-chart></line-chart>
+      <Col span="24">
+        <div class="chart-wrap" style="height: 600px">
+          <!-- <line-chart></line-chart> -->
         </div>
       </Col>
     </Row>

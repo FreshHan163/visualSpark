@@ -14,10 +14,10 @@
 <template>
   <div class="layout-wrap">
     <!-- <h1>饼图展示</h1> -->
-    <div class="line-ip-chart" ref="lineIpChart" style="width: 600px;height: 180px;"></div>
-    <div class="line-ip-chart" ref="linePortChart" style="width: 600px;height: 180px;"></div>
+    <div class="line-ip-chart" ref="lineIpChart" style="width: 600px;height: 160px;"></div>
+    <div class="line-ip-chart" ref="linePortChart" style="width: 600px;height: 160px;"></div>
     <!-- <div class="line-ip-chart" ref="destIpChart15" style="width: 600px;height: 180px;"></div> -->
-    <div class="line-ip-chart" ref="destIpChart03" style="width: 600px;height: 180px;"></div>
+    <div class="line-ip-chart" ref="destIpChart03" style="width: 600px;height: 160px;"></div>
   </div>
 </template>
 
@@ -65,7 +65,7 @@ export default {
   },
   methods: {
     getSrcPort51358() {
-      return this.$http.get('/api/getDestPort0214_80').then((res) => {
+      return this.$http.get('/api/getSrcIp0214_1016515').then((res) => {
         res.body.forEach((item) => {
           item.bytes = item.bytes / 1000000;
           // item.links = item.links;
@@ -96,11 +96,11 @@ export default {
       var colors = ['#5793f3', '#d14a61', '#675bba'];
       let lineOption = {
         title: {
-          text: '目的端口--80流量时序图',
+          text: '源IP--10.16.5.15流量时序图',
           left: 'center',
           textStyle: {
             color: '#333',
-            fontSize: 16,
+            fontSize: 14,
           }
         },
         color: colors,
@@ -205,7 +205,7 @@ export default {
           left: 'center',
           textStyle: {
             color: '#333',
-            fontSize: 16,
+            fontSize: 14,
           }
         },
         color: colors,
@@ -306,11 +306,11 @@ export default {
       var colors = ['#5793f3', '#d14a61', '#675bba'];
       let lineOption = {
         title: {
-          text: '目的端口--80流量时序图',
+          text: '源IP--10.16.5.15流量时序图',
           left: 'center',
           textStyle: {
             color: '#333',
-            fontSize: 16,
+            fontSize: 14,
           }
         },
         color: colors,
@@ -409,7 +409,7 @@ export default {
           left: 'center',
           textStyle: {
             color: '#333',
-            fontSize: 16,
+            fontSize: 14,
           }
         },
         color: colors,
