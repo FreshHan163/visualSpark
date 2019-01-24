@@ -26,6 +26,8 @@ module.exports = {
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'vetur.validation.template': false,
-    "no-extra-semi": 'off'
+    "vue/no-parsing-error": [2, { "x-invalid-end-tag": false }],
+    "semi": [2, "always"]
+    // "no-extra-semi": 1
   }
 }
