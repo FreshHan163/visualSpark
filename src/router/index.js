@@ -13,6 +13,7 @@ import ExpressPart from '@/components/ExpressPart'
 import SunChart from '@/components/Rose'
 import TopChart from '@/components/topChart'
 import Calender from '@/components/calender'
+import HomePage from '@/pages/Home'
 
 Vue.use(Router)
 
@@ -20,8 +21,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      name: 'HomePage',
+      component: HomePage
     },
     {
       path: '/layout',
