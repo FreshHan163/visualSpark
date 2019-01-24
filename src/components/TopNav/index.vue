@@ -1,20 +1,16 @@
 <template>
   <div class="top-nav">
-    <header>
-      <div class="head-wrap">
-        <div class="head-title">
-          <span>Netflow网络数据监控可视化</span>
-        </div>
-        <ul class="head-menu">
-          <li class="menu-item">
-            <router-link :to="{ name: 'TestLayout'}"  active-class="activeItem">态势感知</router-link>
-          </li>
-          <li class="menu-item">
-            <router-link :to="{ name: 'DetailPage'}" active-class="activeItem">详细配置</router-link>
-          </li>
-        </ul>
-      </div>
-    </header>
+    <div class="head-title title">
+        <span>Netflow网络数据监控可视化</span>
+    </div>
+    <ul class="head-menu">
+        <li class="menu-item nav-title">
+        <router-link :to="{ name: 'TestLayout'}"  active-class="activeItem">态势感知</router-link>
+        </li>
+        <li class="menu-item nav-title">
+        <router-link :to="{ name: 'DetailPage'}" active-class="activeItem">详细配置</router-link>
+        </li>
+    </ul>
   </div>
 </template>
 
@@ -35,35 +31,28 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less">
-.head-wrap {
-  text-align: left;
-  padding-left: 20px;
-  height: 72px;
-  background-color: rgb(72, 79, 108);
-  color: white;
-}
-.head-title {
-  font-size: 30px;
-  font-weight: 700;
-  display: inline-block;
-  line-height: 72px;
-}
-.menu {
-  float: right;
-  line-height: 72px;
-}
-.menu-item {
-  float: left;
-  color: white;
-  font-size: 20px;
-  width: 100px;
-  margin: 0 15px;
-}
-a, a:hover, a:link {
-  text-decoration: none;
-  color: white;
-}
-.activeItem {
-  background: pink;
+.top-nav {
+    width: 100%;
+    height: 80px;
+    line-height: 80px;
+    background: #030829;
+    padding: 0 20px;
+    .head-title, .head-menu, .menu-item {
+        float: left;
+        color: white;
+    }
+    .head-menu {
+        margin-left: 50px;
+    }
+    .menu-item {
+        display: inline-block;
+        height: 80px;
+        margin-right: 20px;
+        padding: 0 10px;
+        border-bottom: 4px solid #4b8df8;
+        a {
+            color: white;
+        }
+    }
 }
 </style>

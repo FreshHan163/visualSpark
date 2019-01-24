@@ -8,6 +8,7 @@
 <script>
 import TopNav from './components/TopNav/index.vue';
 import './assets/less/reset.less';
+import './assets/less/base.less';
 export default {
   name: 'App',
   components: {
