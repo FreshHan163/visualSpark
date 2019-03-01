@@ -47,7 +47,7 @@ export default {
       });
     },
     getSunTcpData() {
-      this.$http.get('/api/getSunTcp0619').then((res) => {
+      this.axios.get('/api/getSunTcp0619').then((res) => {
         console.log('太阳图tcp--数据', res.body);
         res.body.forEach(item => {
             item.name = item.destPort;
@@ -57,7 +57,7 @@ export default {
       });
     },
     getSunUdpData() {
-      this.$http.get('/api/getSunUdp0619').then((res) => {
+      this.axios.get('/api/getSunUdp0619').then((res) => {
         console.log('太阳图udp--数据', res.body);
         res.body.forEach(item => {
             item.name = item.destPort;
@@ -70,7 +70,7 @@ export default {
       });
     },
     getSunOtherData() {
-      this.$http.get('/api/getSunOther0619').then((res) => {
+      this.axios.get('/api/getSunOther0619').then((res) => {
         console.log('太阳图other--数据', res.body);
         res.body.forEach(item => {
             item.name = item.destPort;

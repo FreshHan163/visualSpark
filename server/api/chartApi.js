@@ -3,7 +3,6 @@ var models = require('../db');
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
-var $sql = require('../sql/sqlMap');
 var $sqlVisualSPark = require('../sql/sqlVisualSpark');
 
 //连接数据库
@@ -21,21 +20,6 @@ var jsonWrite = function(res, ret) {
     res.json(ret);
   }
 };
-
-router.get('/getPieData', (req, res) => {
-  // res.send('THis is from /api/getPieData. pieChart!');
-  var sql = $sql.chart.queryAll;
-  var params = req.body;
-  console.log(params);
-  conn.query(sql, function(err, result) {
-    if (err) {
-      console.log(err);
-    }
-    if (result) {
-      jsonWrite(res, result);
-    }
-  });
-});
 
 router.get('/getVisual', (req, res) => {
   // res.send('THis is from /api/getPieData. pieChart!');

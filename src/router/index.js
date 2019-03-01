@@ -4,7 +4,8 @@ import HelloWorld from '@/components/HelloWorld'
 import Layout from '@/components/testLayout'
 import GuideChart from '@/components/GuideChart'
 import FlexChart from '@/components/FlexChart'
-import DetailPage from '@/components/DetailPage'
+// import DetailPage from '@/components/DetailPage'
+import DetailPage from '@/components/Detail'
 import CampusChart from '@/components/CampusChart'
 import HeatmapChart from '@/components/HeatmapChart'
 import PieChart from '@/components/PieChart'
@@ -20,7 +21,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'HomePage',
       component: HomePage
     },

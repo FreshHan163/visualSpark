@@ -53,33 +53,33 @@ export default {
       });
     },
     getHeatSrcIp() {
-      this.$http.get('/api/getHeatSrcIp0214').then((res) => {
-        console.log(res.body);
-        console.log(res.body.slice(0, 20));
-        this.heatSrcIpData = res.body.slice(0, 20);
+      this.axios.get('/api/getHeatSrcIp0214').then((res) => {
+        console.log(res.data);
+        console.log(res.data.slice(0, 20));
+        this.heatSrcIpData = res.data.slice(0, 20);
         console.log('热力图--srcIp数据', this.heatSrcIpData);
-        this.instances = Object.assign({}, {srcIp: res.body.slice(0, 5)});
+        this.instances = Object.assign({}, {srcIp: res.data.slice(0, 5)});
       });
     },
     getHeatSrcPort() {
-      this.$http.get('/api/getHeatSrcPort0214').then((res) => {
-        this.heatSrcPortData = res.body.slice(0, 20);
+      this.axios.get('/api/getHeatSrcPort0214').then((res) => {
+        this.heatSrcPortData = res.data.slice(0, 20);
         console.log('热力图--srcIp数据', this.heatSrcPortData);
-        this.instances = Object.assign(this.instances, {srcPort: res.body.slice(0, 5)});
+        this.instances = Object.assign(this.instances, {srcPort: res.data.slice(0, 5)});
       });
     },
     getHeatDestIp() {
-      this.$http.get('/api/getHeatDestIp0214').then((res) => {
-        this.heatDestIpData = res.body.slice(0, 20);
+      this.axios.get('/api/getHeatDestIp0214').then((res) => {
+        this.heatDestIpData = res.data.slice(0, 20);
         console.log('热力图--srcIp数据', this.heatDestIpData);
-        this.instances = Object.assign(this.instances, {destIp: res.body.slice(0, 5)});
+        this.instances = Object.assign(this.instances, {destIp: res.data.slice(0, 5)});
       });
     },
     getHeatDestPort() {
-      this.$http.get('/api/getHeatDestPort0214').then((res) => {
-        this.heatDestPortData = res.body.slice(0, 20);
+      this.axios.get('/api/getHeatDestPort0214').then((res) => {
+        this.heatDestPortData = res.data.slice(0, 20);
         console.log('热力图--srcIp数据', this.heatDestPortData);
-        this.instances = Object.assign(this.instances, {destPort: res.body.slice(0, 5)});
+        this.instances = Object.assign(this.instances, {destPort: res.data.slice(0, 5)});
         // console.log('最终的对象数组', this.instances);
       });
     },

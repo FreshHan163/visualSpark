@@ -7,18 +7,21 @@
       margin: 0 auto;
       max-width: 100%;
       max-height: 100%;
+      width: 100%;
+      height: 500px;
     }
   }
 </style>
 <template>
   <div class="layout-wrap">
-    <div class="parallel-chart" id="parallelChart" style="width: 1200px;height: 500px;"></div>
+    <div class="parallel-chart" id="parallelChart" style=""></div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'ParallelChart',
+  props: ['legend', 'changeLegendFlag'],
   data () {
     return {
       instances: [],
@@ -35,7 +38,6 @@ export default {
       pktsData: []
     };
   },
-
   mounted () {
       this.getParaSrcIp().then(() => {
         this.getParaSrcPort();
@@ -50,59 +52,10 @@ export default {
           this.getParaTotalPackets();
         });
       });
-    // this.getTimeData();
     this.handleData();
   },
   methods: {
     handleData() {
-              setTimeout(() => {
-          console.log('绘制平行坐标图');
-          this.srcIpData.forEach((item, index) => {
-            switch (item[1]) {
-              case '172.10':
-                item.splice(1, 1);
-                this.tcpInstances.push(item);
-                break;
-              case '172.20':
-                item.splice(1, 1);
-                this.udpInstances.push(item);
-                break;
-              case '172.30':
-                item.splice(1, 1);
-                this.otherInstances.push(item);
-                break;
-              default:
-                break;
-            }
-          });
-          console.log('tcpInstances:', this.tcpInstances);
-          console.log('udpInstances:', this.udpInstances);
-          console.log('otherInstances:', this.otherInstances);
-          this.drawChallParallel();
-        }, 3000);
-    },
-    getTimeData() {
-      this.axios.get('/api/getParaTimeData').then((res) => {
-        res.data.forEach((item) => {
-          this.timeData = this.timeData.concat(Object.values(item));
-        });
-        console.log('处理后的数组timeData', this.timeData);
-
-      }).then(() => {
-        this.getParaSrcIp().then(() => {
-          this.getParaSrcPort();
-        }).then(() => {
-          this.getParaDestIp().then(() => {
-            this.getParaDestPort();
-          }).then(() => {
-            this.getParaTotalCount();
-          }).then(() => {
-            this.getParaTotalBytes();
-          }).then(() => {
-            this.getParaTotalPackets();
-          });
-        });
-      }).then(() => {
         setTimeout(() => {
           console.log('绘制平行坐标图');
           this.srcIpData.forEach((item, index) => {
@@ -123,139 +76,74 @@ export default {
                 break;
             }
           });
-          console.log('tcpInstances:', this.tcpInstances);
-          console.log('udpInstances:', this.udpInstances);
-          console.log('otherInstances:', this.otherInstances);
           this.drawChallParallel();
         }, 3000);
-      });
+    },
+    handleControl() {
+      if(this.changeLegendFlag) {
+        parallelChart.dispatchAction({
+            type: 'selectDataRange',
+            selected: this.legend
+        });
+      }
     },
     getParaSrcIp() {
       return this.axios.get('/api/getSrcIpEntropyHours').then((res) => {
         res.data.forEach((item, index) => {
-          // if (!item.srcIpEntropyTotal) {
-          //   item.srcIpEntropyTotal = 0;
-          // }
-          // console.log(this.timeData[index])
             this.srcIpData.push(Object.values(item));
             this.timeData.push(item.hours);
-
-          // if (this.timeData[index] == item.hours) {
-          // } else {
-          //   let data = [item.hours, 0, 0];
-          //   this.srcIpData.push(data);
-          // }
         });
-        console.log('平行坐标图----srcIp数据', this.srcIpData);
-        console.log('平行坐标图----时间数据', this.timeData);
       });
     },
     getParaSrcPort() {
-      // this.axios.get('/api/getParaSrcPort').then((res) => {
       return this.axios.get('/api/getSrcPortEntropyHours').then((res) => {
         res.data.forEach((item, index) => {
-          // if (!item.srcPortEntropyTotal) {
-          //   item.srcPortEntropyTotal = 0;
-          // }
           this.srcPortData.push(Object.values(item));
           this.srcIpData[index].push(item.srcPortEntropyTotal);
         });
-        console.log('平行坐标图----srcPort数据', this.srcPortData);
       });
     },
     getParaDestIp() {
-      // this.axios.get('/api/getParaDestIp').then((res) => {
       return this.axios.get('/api/getDestIpEntropyHours').then((res) => {
         res.data.forEach((item, index) => {
-          // if (!item.destIpEntropyTotal) {
-          //   item.destIpEntropyTotal = 0;
-          // }
           this.destIpData.push(Object.values(item));
-          // this.srcIpData[index].push(item.destIpEntropy);
           this.srcIpData[index].push(item.destIpEntropyTotal);
         });
-        console.log('平行坐标图----destIp数据', this.destPortData);
       });
     },
     getParaDestPort() {
-      // this.axios.get('/api/getParaDestPort').then((res) => {
       return this.axios.get('/api/getDestPortEntropyHours').then((res) => {
         res.data.forEach((item, index) => {
-          // if (!item.destPortEntropyTotal) {
-          //   item.destPortEntropyTotal = 0;
-          // }
           this.destPortData.push(Object.values(item));
-          // this.srcIpData[index].push(item.destPortEntropy);
           this.srcIpData[index].push(item.destPortEntropyTotal);
         });
-        console.log('平行坐标图----destPort数据', this.destPortData);
       });
     },
     getParaTotalCount() {
       return this.axios.get('/api/getParaTotalCount').then((res) => {
         res.data.forEach((item, index) => {
-          // if (!item.destPortEntropyTotal) {
-          //   item.destPortEntropyTotal = 0;
-          // }
           this.countData.push(Object.values(item));
           this.srcIpData[index].push(item.count);
         });
-        console.log('连接数完成！');
       });
     },
     getParaTotalBytes() {
       return this.axios.get('/api/getParaTotalBytes').then((res) => {
         res.data.forEach((item, index) => {
-          // if (!item.destPortEntropyTotal) {
-          //   item.destPortEntropyTotal = 0;
-          // }
           this.bytesData.push(Object.values(item));
           this.srcIpData[index].push(item.bytes);
         });
-        console.log('字节数完成！');
       });
     },
     getParaTotalPackets() {
       return this.axios.get('/api/getParaTotalPackets').then((res) => {
         res.data.forEach((item, index) => {
-          // if (!item.destPortEntropyTotal) {
-          //   item.destPortEntropyTotal = 0;
-          // }
           this.pktsData.push(Object.values(item));
-          this.srcIpData[index].push(item.packets);
+          this.srcIpData[index].push(item.pkts);
         });
-      }).then(() => {
-        // setTimeout(() => {
-        //           console.log('绘制平行坐标图');
-        // console.log(this.srcIpData);
-        // this.srcIpData.forEach((item, index) => {
-        //   switch (item[1]) {
-        //     case 'TCP':
-        //       item.splice(1, 1);
-        //       this.tcpInstances.push(item);
-        //       break;
-        //     case 'UDP':
-        //       item.splice(1, 1);
-        //       this.udpInstances.push(item);
-        //       break;
-        //     case 'OTHER':
-        //       item.splice(1, 1);
-        //       this.otherInstances.push(item);
-        //       break;
-        //     default:
-        //       break;
-        //   }
-        // });
-
-        // console.log('tcpInstances:', this.tcpInstances);
-        // console.log('udpInstances:', this.udpInstances);
-        // console.log('otherInstances:', this.otherInstances);
-        // this.drawChallParallel();
-
-        // }, 0);
       });
     },
-    drawChallParallel () {
+    drawChallParallel() {
       let parallelChart = this.$echarts.init(document.getElementById('parallelChart'));
 
     var schema = [
@@ -277,10 +165,8 @@ export default {
     };
 
     let option = {
-        backgroundColor: '#333',
         legend: {
-            // center: 10,
-            bottom: 10,
+            bottom: 20,
             data: ['172.10', '172.20', '172.30'],
             itemGap: 20,
             textStyle: {
@@ -339,7 +225,8 @@ export default {
             show: true,
             min: 0,
             max: 1,
-            right: 0,
+            right: 12,
+            bottom: 200,
             dimension: 6,
             type: 'piecewise',
             inRange: {

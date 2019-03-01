@@ -123,7 +123,7 @@ export default {
       }, 0);
     },
     getPieData() {
-      this.$http.get('/api/getPieData').then((res) => {
+      this.axios.get('/api/getPieData').then((res) => {
         console.log(res.body);
         this.instances = res.body;
       }).then(() => {

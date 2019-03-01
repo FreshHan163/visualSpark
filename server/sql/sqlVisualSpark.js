@@ -263,63 +263,6 @@ var sqlVisualSPark = {
     t3.protocolCode
   order by
     hours`,
-    querySunburstUdp: `select sum(sunburst.srcBytes) as srcAllBytes, destPort, protocolCode
-    from
-    (select
-      SUM(srcTotalBytes) as srcBytes, destPort, protocolCode,
-      FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00')
-      AS hours
-    from
-      challenge
-    GROUP BY
-      TimeSeconds, protocolCode, destPort
-    ) as sunburst
-    where
-      sunburst.hours = '2013-04-01 16:00:00' AND sunburst.protocolCode = 'UDP'
-    group by
-      sunburst.hours, sunburst.protocolCode, sunburst.destPort
-    order by
-      protocolCode, srcAllBytes
-    DESC
-    LIMIT 0,5`,
-    querySunburstTcp: `select sum(sunburst.srcBytes) as srcAllBytes, destPort, protocolCode
-    from
-    (select
-      SUM(srcTotalBytes) as srcBytes, destPort, protocolCode,
-      FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00')
-      AS hours
-    from
-      challenge
-    GROUP BY
-      TimeSeconds, protocolCode, destPort
-    ) as sunburst
-    where
-      sunburst.hours = '2013-04-01 16:00:00' AND sunburst.protocolCode = 'TCP'
-    group by
-      sunburst.hours, sunburst.protocolCode, sunburst.destPort
-    order by
-      protocolCode, srcAllBytes
-    DESC
-    LIMIT 0,5`,
-    querySunburstOther: `select sum(sunburst.srcBytes) as srcAllBytes, srcPort, protocolCode
-    from
-    (select
-      SUM(srcTotalBytes) as srcBytes, destPort, protocolCode,
-      FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00')
-      AS hours
-    from
-      challenge
-    GROUP BY
-      TimeSeconds, protocolCode, destPort
-    ) as sunburst
-    where
-      sunburst.hours = '2013-04-01 16:00:00' AND sunburst.protocolCode = 'OTHER'
-    group by
-      sunburst.hours, sunburst.protocolCode, sunburst.destPort
-    order by
-      protocolCode, srcAllBytes
-    DESC
-    LIMIT 0,10`,
     queryTimeData: `SELECT
     DISTINCT FROM_UNIXTIME(TimeSeconds,'%Y-%m-%d %H:00:00')
     AS hours

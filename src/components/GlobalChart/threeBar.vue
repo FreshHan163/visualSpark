@@ -5,7 +5,7 @@
     width: 100%;
     .three-bar-chart {
       width: 100%;
-      height: 400px;
+      height: 500px;
       margin: 0 auto;
     }
   }
@@ -21,16 +21,19 @@ import echarts from 'echarts';
 
 export default {
   name: 'threeBarChart',
+  props: ['legend', 'changeLegendFlag'],
   data () {
     return {
       instances: [],
       xData: [],
       yData: [],
-      zData: []
+      zData: [],
+      threeBar: '',
     };
   },
   mounted () {
     this.getBarData();
+    // this.threeBarChart = echarts.init(this.$refs.threeBarChart);
   },
 
   methods: {
@@ -44,6 +47,7 @@ export default {
     },
     drawThreeBar () {
       let threeBarChart = echarts.init(this.$refs.threeBarChart);
+      console.log('创建三维柱状图！');
       let data = [];
       this.instances.forEach(item => {
         let arr = [];
@@ -62,8 +66,8 @@ export default {
               max: 200,
               min: 0,
               type: 'piecewise',
-              right: 10,
-              bottom: 10,
+              right: 12,
+              bottom: 200,
               dimension: 'srcAllBytes',
               inRange: {
                   // color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
@@ -122,7 +126,8 @@ export default {
           },
           grid3D: {
               boxWidth: 400,
-              boxDepth: 80,
+              boxHeight: 100,
+              boxDepth: 130,
               left: -80,
               top: -40,
               viewControl: {
@@ -194,15 +199,31 @@ export default {
           ]
       };
       threeBarChart.setOption(threeBarption);
+      // this.threeBarChart.setOption(threeBarption);
+      // this.handleControl(threeBarChart);
+      // if(this.changeLegendFlag) {
+      //   threeBarChart.dispatchAction({
+      //       type: 'selectDataRange',
+      //       selected: this.legend
+      //   });
+      // }
       // threeBarChart.dispatchAction({
-        type: 'selectDataRange',
-        // 选取 20 到 40 的值范围
-        // selected: [3000000000, 40000000000],
-        // 取消选中第二段
-        // selected: { 1: false },
-        // 取消选中类目 `优`
-        // selected: { '优': false }
-    // });
+      //     type: 'selectDataRange',
+      //     selected: ['0-40', '40-80', '80-120'],
+      // });
+      threeBarChart.on('click', (parmas) => {
+        this.$router.push({path: '/detail', query: { id: '1'}});
+        console.log(parmas);
+          // $.get('detail?q=' + params.name, function (detail) {
+          //     myChart.setOption({
+          //         series: [{
+          //             name: 'pie',
+          //             // 通过饼图表现单个柱子中的数据分布
+          //             data: [detail.data]
+          //         }]
+          //     });
+          // });
+      });
       threeBarChart.on('mouseover', function (parmas) {
         console.log(parmas);
           // $.get('detail?q=' + params.name, function (detail) {
@@ -215,7 +236,16 @@ export default {
           //     });
           // });
       });
-    }
+    },
+    handleControl(chart) {
+      debugger
+      if(this.changeLegendFlag) {
+        chart.dispatchAction({
+            type: 'selectDataRange',
+            selected: this.legend
+        });
+      }
+    },
   }
 };
 </script>

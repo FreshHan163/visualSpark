@@ -3,7 +3,7 @@ var models = require('../db');
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
-var $sql = require('../sql/sqlMap');
+var $sql = require('../sql/sqlUser');
 
 //连接数据库
 // var conn = mysql.createConnection(models.mysql);
@@ -21,6 +21,25 @@ var jsonWrite = function(res, ret) {
     res.json(ret);
   }
 };
+
+router.get('/test', function (req, res) {
+  res.send('POST request to homepage');
+});
+
+// 获取ip
+router.post('/getIp', (req, res) => {
+    var sql = $sql.test.getIp;
+    var params = req.body;
+    console.log(req.body);
+    conn.query(sql, [params.ips, params.hours], function(err, result) {
+      if (err) {
+        console.log(err);
+      }
+      if (result) {
+        jsonWrite(res, result);
+      }
+    });
+});
 
 // 增加用户接口addUser的post方法，req是客户端发来的请求，res为服务端返回的数据
 router.post('/addUser', (req, res) => {

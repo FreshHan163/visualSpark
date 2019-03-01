@@ -8,12 +8,16 @@ import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 import echarts from 'echarts'
 import 'echarts-gl'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
 
 Vue.config.productionTip = false
 Vue.prototype.$echarts = echarts
 Vue.use(iView)
 Vue.prototype.$echarts = echarts
-Vue.use(VueResource)
+// Vue.use(VueResource)
+Vue.use(VueAxios, axios)
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

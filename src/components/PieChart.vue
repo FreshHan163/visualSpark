@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     getPieData() {
-      this.$http.get('/api/getPiePort').then((res) => {
+      this.axios.get('/api/getPiePort').then((res) => {
         console.log(res.body);
         res.body.forEach(item => {
           switch(item.destPort) {

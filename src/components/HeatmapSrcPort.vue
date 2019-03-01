@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     getHeatmapData() {
-      this.$http.get('/api/getHeatSrcPort').then((res) => {
+      this.axios.get('/api/getHeatSrcPort').then((res) => {
         console.log('热力图--srcPort数据', res.body);
         this.instances = res.body;
       }).then(() => {

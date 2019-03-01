@@ -50,7 +50,7 @@ export default {
     this.getDestIp03().then(() => {
       this.drawBarDestIp03();
     });
-    this.$http.get('/api/getSrcIp0619').then((res) => {
+    this.axios.get('/api/getSrcIp0619').then((res) => {
       res.body.forEach((item) => {
         item.bytes = item.bytes / 1000000;
         // item.links = item.links;
@@ -65,7 +65,7 @@ export default {
   },
   methods: {
     getSrcPort51358() {
-      return this.$http.get('/api/getSrcPort0619_51358').then((res) => {
+      return this.axios.get('/api/getSrcPort0619_51358').then((res) => {
         res.body.forEach((item) => {
           item.bytes = item.bytes / 1000000;
           // item.links = item.links;
@@ -74,7 +74,7 @@ export default {
       });
     },
     getDestIp15() {
-      return this.$http.get('/api/getDestIp061915').then((res) => {
+      return this.axios.get('/api/getDestIp061915').then((res) => {
         res.body.forEach((item) => {
           item.bytes = item.bytes / 1000000;
           // item.links = item.links;
@@ -83,7 +83,7 @@ export default {
       });
     },
     getDestIp03() {
-      return this.$http.get('/api/getDestIp061903').then((res) => {
+      return this.axios.get('/api/getDestIp061903').then((res) => {
         res.body.forEach((item) => {
           item.bytes = item.bytes / 1000000;
           // item.links = item.links;

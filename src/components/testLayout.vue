@@ -99,7 +99,7 @@ export default {
       this.chart = val;
     },
     testParentAjax() {
-      this.$http.get('/api/getPiePort').then((res) => {
+      this.axios.get('/api/getPiePort').then((res) => {
         console.log(res.body);
         this.instances = res.body;
       }).then(() => {

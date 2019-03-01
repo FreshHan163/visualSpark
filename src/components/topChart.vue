@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     // getHeatSrcIpLink() {
-    //   this.$http.get('/api/getHeatSrcIpLink').then((res) => {
+    //   this.axios.get('/api/getHeatSrcIpLink').then((res) => {
     //     res.body.forEach((item, index) => {
     //       item.totalItem = item.srcIpLinkCount;
     //       item.dimension = item.srcIp;
@@ -53,7 +53,7 @@ export default {
     //   });
     // },
     // getHeatSrcPortLink() {
-    //   this.$http.get('/api/getHeatSrcPortLink').then((res) => {
+    //   this.axios.get('/api/getHeatSrcPortLink').then((res) => {
     //     res.body.forEach((item, index) => {
     //       item.totalItem = item.srcPortLinkCount;
     //       item.dimension = item.srcPort;

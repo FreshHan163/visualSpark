@@ -53,7 +53,7 @@ export default {
       });
     },
     getHeatSrcIp() {
-      this.$http.get('/api/getHeatSrcIp').then((res) => {
+      this.axios.get('/api/getHeatSrcIp').then((res) => {
         console.log(res.body);
         console.log(res.body.slice(0, 20));
         this.heatSrcIpData = res.body.slice(0, 20);
@@ -62,21 +62,21 @@ export default {
       });
     },
     getHeatSrcPort() {
-      this.$http.get('/api/getHeatSrcPort').then((res) => {
+      this.axios.get('/api/getHeatSrcPort').then((res) => {
         this.heatSrcPortData = res.body.slice(0, 20);
         console.log('热力图--srcIp数据', this.heatSrcPortData);
         this.instances = Object.assign(this.instances, {srcPort: res.body.slice(0, 5)});
       });
     },
     getHeatDestIp() {
-      this.$http.get('/api/getHeatDestIp').then((res) => {
+      this.axios.get('/api/getHeatDestIp').then((res) => {
         this.heatDestIpData = res.body.slice(0, 20);
         console.log('热力图--srcIp数据', this.heatDestIpData);
         this.instances = Object.assign(this.instances, {destIp: res.body.slice(0, 5)});
       });
     },
     getHeatDestPort() {
-      this.$http.get('/api/getHeatDestPort').then((res) => {
+      this.axios.get('/api/getHeatDestPort').then((res) => {
         this.heatDestPortData = res.body.slice(0, 20);
         console.log('热力图--srcIp数据', this.heatDestPortData);
         this.instances = Object.assign(this.instances, {destPort: res.body.slice(0, 5)});

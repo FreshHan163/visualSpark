@@ -1,9 +1,9 @@
 // 数据库连接配置
 module.exports = {
   mysql: {
-    hoset: 'localhost',
+    host: 'localhost',
     user: 'root',
-    password: 'didi1234',
+    password: '12345678',
     database: 'chart',
     port: '3306'
   }

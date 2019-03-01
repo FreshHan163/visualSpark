@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     getUserDetail() {
-      this.$http.post('/api/getUserById', {
+      this.axios.post('/api/getUserById', {
         id: 12
       }, {}).then((res) => {
         console.log('get请求返回数据',res);
@@ -51,15 +51,15 @@ export default {
     addUser() {
       var name = this.userName;
       var age = this.age;
-      // console.log(this.$http);
-      // this.$http.get('/api/addUser').then((res) => {
+      // console.log(this.axios);
+      // this.axios.get('/api/addUser').then((res) => {
       //   console.log(res);
       // }, (err) => {
       //   console.log(err);
       // });
       var index = this.index + 1;
       this.index = index;
-      this.$http.post('/api/addUser', {
+      this.axios.post('/api/addUser', {
         id: index,
         username: name,
         age: age
@@ -68,7 +68,7 @@ export default {
       });
     },
     getUserList() {
-      this.$http.get('/api/getUser').then((res) => {
+      this.axios.get('/api/getUser').then((res) => {
         this.userList = res.body;
         console.log(res);
       });
