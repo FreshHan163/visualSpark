@@ -23,8 +23,8 @@ var jsonWrite = function(res, ret) {
 // 获取3d数据
 router.get('/getThreeBar', (req, res) => {
     var sql = $sql.chart.getThreeBarDay;
-    var params = req.body;
-    conn.query(sql, [params.ips, params.hours], function(err, result) {
+    var query = req.query;
+    conn.query(sql, [query.ips, query.hours], function(err, result) {
       if (err) {
         console.log(err);
       }
@@ -37,8 +37,6 @@ router.get('/getThreeBar', (req, res) => {
 // 平行坐标数据--destPort
 router.get('/getDestPortEntropyHours', (req, res) => {
   var sql = $sql.chart.queryDestPortEntropy;
-  var params = req.body;
-  console.log(params);
   conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
@@ -50,8 +48,6 @@ router.get('/getDestPortEntropyHours', (req, res) => {
 });
 router.get('/getDestIpEntropyHours', (req, res) => {
   var sql = $sql.chart.queryDestIpEntropy;
-  var params = req.body;
-  console.log(params);
   conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
@@ -63,8 +59,6 @@ router.get('/getDestIpEntropyHours', (req, res) => {
 });
 router.get('/getSrcIpEntropyHours', (req, res) => {
   var sql = $sql.chart.querySrcIpEntropy;
-  var params = req.body;
-  console.log(params);
   conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
@@ -76,21 +70,6 @@ router.get('/getSrcIpEntropyHours', (req, res) => {
 });
 router.get('/getSrcPortEntropyHours', (req, res) => {
   var sql = $sql.chart.querySrcPortEntropy;
-  var params = req.body;
-  console.log(params);
-  conn.query(sql, function(err, result) {
-    if (err) {
-      console.log(err);
-    }
-    if (result) {
-      jsonWrite(res, result);
-    }
-  });
-});
-router.get('/getParaTimeData', (req, res) => {
-  var sql = $sql.chart.queryParaTimeData;
-  var params = req.body;
-  console.log(params);
   conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
@@ -102,8 +81,6 @@ router.get('/getParaTimeData', (req, res) => {
 });
 router.get('/getParaTotalBytes', (req, res) => {
   var sql = $sql.chart.queryParaTotalBytes;
-  var params = req.body;
-  console.log(params);
   conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
@@ -115,8 +92,6 @@ router.get('/getParaTotalBytes', (req, res) => {
 });
 router.get('/getParaTotalCount', (req, res) => {
   var sql = $sql.chart.queryParaTotalCount;
-  var params = req.body;
-  console.log(params);
   conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
@@ -128,9 +103,183 @@ router.get('/getParaTotalCount', (req, res) => {
 });
 router.get('/getParaTotalPackets', (req, res) => {
   var sql = $sql.chart.queryParaTotalPackets;
-  var params = req.body;
-  console.log(params);
   conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+// 热力图
+router.get('/getHeatSrcIp', (req, res) => {
+  var sql = $sql.chart.queryHeatSrcIp;
+  var query = req.query;
+  conn.query(sql, [query.hours], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatSrcPort', (req, res) => {
+  var sql = $sql.chart.queryHeatSrcPort;
+  var query = req.query;
+  conn.query(sql, [query.hours], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatDestIp', (req, res) => {
+  var sql = $sql.chart.queryHeatDestIp;
+  var query = req.query;
+  console.log('query = ', query.hours);
+  conn.query(sql, [query.hours], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getHeatDestPort', (req, res) => {
+  var sql = $sql.chart.queryHeatDestPort;
+  var query = req.query;
+  conn.query(sql, [query.hours], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+
+// 气泡图
+router.get('/getBubbleDestIpLink', (req, res) => {
+  var sql = $sql.chart.queryBubbleDestIpLink;
+  console.log('query = ', req.query);
+  var query = req.query;
+  conn.query(sql, [query.hours], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getBubbleDestPortLink', (req, res) => {
+  var sql = $sql.chart.queryBubbleDestPortLink;
+  var query = req.query;
+  conn.query(sql, [query.hours], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getBubbleSrcIpLink', (req, res) => {
+  var sql = $sql.chart.queryBubbleSrcIpLink;
+  var query = req.query;
+  console.log('query = ', req.query, sql);
+  conn.query(sql, [query.hours], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getBubbleSrcPortLink', (req, res) => {
+  var sql = $sql.chart.queryBubbleSrcPortLink;
+  var query = req.query;
+  conn.query(sql, [query.hours], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getBubbleDestIpPort', (req, res) => {
+  var sql = $sql.chart.queryBubbleDestIpPort;
+  var query = req.query;
+  conn.query(sql, [query.hours], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getBubbleSrcIpPort', (req, res) => {
+  var sql = $sql.chart.queryBubbleSrcIpPort;
+  var query = req.query;
+  conn.query(sql, [query.hours], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+
+// 查询IP、端口号
+router.get('/getSrcIp', (req, res) => {
+  var sql = $sql.chart.querySrcIp;
+  var query = req.query;
+  conn.query(sql, [query.ip], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getDestIp', (req, res) => {
+  var sql = $sql.chart.queryDestIp;
+  var query = req.query;
+  conn.query(sql, [query.ip], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getSrcPort', (req, res) => {
+  var sql = $sql.chart.querySrcPort;
+  var query = req.query;
+  conn.query(sql, [query.port], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+router.get('/getDestPort', (req, res) => {
+  var sql = $sql.chart.queryDestPort;
+  var query = req.query;
+  conn.query(sql, [query.port], function(err, result) {
     if (err) {
       console.log(err);
     }

@@ -3,59 +3,60 @@
     <!-- 时间序列图 -->
     <Row>
       <Col span="16" style="height: 400px">
-        <div class="chart-wrap">
-          时间序列图
-        </div>
+        <panel :width="800" :height="400" titleIcon="ddd">
+          <span slot="header">实时气泡图</span>
+          <div slot="body">
+            <line-chart />
+          </div>
+        </panel>
+        <!-- <div class="chart-wrap">
+          <line-chart />
+        </div> -->
       </Col>
       <Col span="8">
-        <div class="report-wrap">
+        <panel :width="420" :height="400">
+          <div slot="body">
             <Control />
-        </div>
+            <!-- <line-chart /> -->
+          </div>
+        </panel>
+        <!-- <div class="report-wrap">
+            <Control />
+        </div> -->
       </Col>
     </Row>
     <!-- 热力图 -->
     <Row>
       <Col span="16">
-        <div class="chart-wrap">
+        <panel :width="800" :height="440" titleIcon="ddd">
+          <span slot="header">实时流量图</span>
+          <div slot="body">
+            <heatmap-chart @transferReport="transferReport"></heatmap-chart>
+          </div>
+        </panel>
+        <!-- <div class="chart-wrap">
           <heatmap-chart @transferReport="transferReport"></heatmap-chart>
-        </div>
+        </div> -->
       </Col>
       <Col span="8">
-        <div class="report-wrap">
-          <!-- <Table :columns="srcIpColumns" :data="heatSrcIpData" width="300"></Table> -->
-          <ul class="report-list-top">
-            <li class="src-ip-circle"><span>源IP Top-5</span></li>
-            <li v-for="(item, index) in heatSrcIpData" :key="index">
-              {{item.srcIp}}：{{item.srcBytes}}
-            </li>
-          </ul>
-          <ul class="report-list-top">
-            <li class="src-ip-circle"><span>目的IP Top-5</span></li>
-            <li v-for="(item, index) in heatDestIpData" :key="index">
-              {{item.destIp}}：{{item.destAllBytes}}
-            </li>
-          </ul>
-          <ul class="report-list-top">
-            <li class="src-ip-circle"><span>源端口 Top-5</span></li>
-            <li v-for="(item, index) in heatSrcPortData" :key="index">
-              {{item.srcPort}}：{{item.srcBytes}}
-            </li>
-          </ul>
-          <ul class="report-list-top">
-            <li class="src-ip-circle"><span>目的端口 Top-5</span></li>
-            <li v-for="(item, index) in heatDestPortData" :key="index">
-              {{item.destPort}}：{{item.destBytes}}
-            </li>
-          </ul>
-        </div>
+        <heatmap-table :heatSrcIpData="heatSrcIpData"
+          :heatDestIpData="heatDestIpData"
+          :heatSrcPortData="heatSrcPortData"
+          :heatDestPortData="heatDestPortData"/>
       </Col>
     </Row>
     <!-- 气泡图 -->
     <Row>
       <Col span="16">
-        <div class="chart-wrap">
-          <!-- <top-chart :instances="instances"></top-chart> -->
-        </div>
+        <panel :width="800" :height="400" titleIcon="ddd">
+          <span slot="header">实时气泡图</span>
+          <div slot="body">
+            <bubble :instances="instances" :intervalFlag="intervalFlag"></bubble>
+          </div>
+        </panel>
+        <!-- <div class="chart-wrap">
+          <bubble :instances="instances" :intervalFlag="intervalFlag"></bubble>
+        </div> -->
       </Col>
       <Col span="8">
         <div class="report-wrap">
@@ -66,21 +67,14 @@
   </div>
 </template>
 <script>
-import LineChart from '../lineIp0214'
-// import HeatmapChart from './HeatmapChart'
-import HeatmapChart from '../HeatmapChart0214'
-// import HeatmapSrcPort from './HeatmapSrcPort'
-// import HeatmapDestIp from './HeatmapDestIp'
-// import HeatmapDestPort from './HeatmapDestPort'
+import HeatmapChart from './HeatmapChart'
+import HeatmapTable from './HeatmapTable'
 import ParallelChart from '../ParallelChart'
 import SunburstChart from '../SunburstChart'
-// import HeatmapCom from './HeatmapCom'
-import TopChart from '../topChart0214'
-// import HeatmapLinkSrcIp from './HeatmapLinkSrcIp'
-// import HeatmapLinkSrcPort from './HeatmapLinkSrcPort'
-// import HeatmapLinkDestIp from './HeatmapLinkDestIp'
-// import HeatmapLinkDestPort from './HeatmapLinkDestPort'
+import Bubble from './Bubble'
 import Control from './control.vue'
+import LineChart from './Line'
+import Panel from '@/components/Panel'
 
 export default {
   name: 'detail-page',
@@ -128,9 +122,10 @@ export default {
         seriesName: '目的IP活跃端口数'
       },
       heatDestIpActivePortData: [],
-      instances: [],
+      instances: {}, // 气泡图的整体数据
+      intervalFlag: {}, // 气泡大小的设置
       reportData: {},
-      heatSrcIpData: [],
+      heatSrcIpData: [], // 热力图表格
       heatSrcPortData: [],
       heatDestIpData: [],
       heatDestPortData: [],
@@ -147,24 +142,22 @@ export default {
     };
   },
   components: {
-    LineChart,
     HeatmapChart,
+    HeatmapTable,
     ParallelChart,
     SunburstChart,
-    // HeatmapSrcPort,
-    // HeatmapDestIp,
-    // HeatmapDestPort,
-    // HeatmapCom,
-    TopChart,
-    Control
+    Control,
+    Bubble,
+    LineChart,
+    Panel
   },
   created() {
-    // this.getHeatSrcIpLink();
-    // this.getHeatSrcPortLink();
-    // this.getHeatDestIpLink();
-    // this.getHeatDestPortLink();
-    // this.getHeatSrcIpActivePort();
-    // this.getHeatDestIpActivePort();
+    this.getBubbleSrcIpLink();
+    this.getBubbleSrcPortLink();
+    this.getBubbleDestIpLink();
+    this.getBubbleDestPortLink();
+    this.getBubbleSrcIpActivePort();
+    this.getBubbleDestIpActivePort();
   },
   methods: {
     transferReport(val) {
@@ -189,119 +182,137 @@ export default {
             }
         }
     },
-    getHeatSrcIpLink() {
-      this.axios.get('/api/getHeatSrcIpLink0214').then((res) => {
-        res.data.forEach((item, index) => {
-          item.totalItem = item.srcIpLinkCount;
+    getBubbleSrcIpLink() {
+      this.axios.get('/api/getBubbleSrcIpLink',
+        {params: {
+            hours: '2013-04-10 15:00:00'
+          }})
+      .then((res) => {
+        let bubbleData = res.data.slice(0, 20);
+        bubbleData.forEach((item, index) => {
+          item.totalItem = item.srcIpLink;
           item.dimension = item.srcIp;
           item.yAxis = 1;
           item.xAxis = index + 1;
           this.heatSrcIpLinkData.push(Object.values(item).reverse());
+          // this.heatSrcIpLinkData.push(item);
         });
-        this.heatSrcIpLinkData = this.heatSrcIpLinkData.slice(0, 20);
-        this.instances.push(this.heatSrcIpLinkData);
-        console.log('热力图--srcIp数据--连接数', this.heatSrcIpLinkData);
+        // this.instances.push(this.heatSrcIpLinkData);
+        this.instances = Object.assign(this.instances, {srcIpLink: this.heatSrcIpLinkData});
+
+        // 气泡图大小间隔自动调节
+        let interval = (bubbleData[0].totalItem / 40).toFixed();
+        this.intervalFlag = Object.assign({}, this.intervalFlag, {srcIpLinkInterval: interval});
       });
     },
-    getHeatSrcPortLink() {
-      this.axios.get('/api/getHeatSrcPortLink0214').then((res) => {
-        res.data.forEach((item, index) => {
-          item.totalItem = item.srcPortLinkCount;
+    getBubbleSrcPortLink() {
+      this.axios.get('/api/getBubbleSrcPortLink',
+      {params: {
+          hours: '2013-04-10 15:00:00'
+        }})
+      .then((res) => {
+        let bubbleData = res.data.slice(0, 20);
+        bubbleData.forEach((item, index) => {
+          item.totalItem = item.srcPortLink;
           item.dimension = item.srcPort;
           item.yAxis = 2;
           item.xAxis = index + 1;
           this.heatSrcPortLinkData.push(Object.values(item).reverse());
         });
-        this.heatSrcPortLinkData = this.heatSrcPortLinkData.slice(0, 20);
-        this.instances.push(this.heatSrcPortLinkData);
-        // console.log('热力图--srcIp数据--连接数', res.data);
-        // res.data.forEach((item, index) => {
-        //   item.totalItem = item.srcPortLinkCount;
-        //   item.dimension = item.srcPort;
-        // });
-        // this.heatSrcPortLinkData = res.data;
-        // this.heatSrcPortLinkOption.showChart = true;
+        // this.instances.push(this.heatSrcPortLinkData);
+        this.instances = Object.assign(this.instances, {srcPortLink: this.heatSrcPortLinkData});
+
+        // 气泡图大小间隔自动调节
+        let interval = (bubbleData[0].totalItem / 40).toFixed();
+        this.intervalFlag = Object.assign({}, this.intervalFlag, {srcPortLinkInterval: interval});
       });
     },
-    getHeatDestIpLink() {
-      this.axios.get('/api/getHeatDestIpLink0214').then((res) => {
-        res.data.forEach((item, index) => {
-          item.totalItem = item.destIpLinkCount;
+    getBubbleDestIpLink() {
+      this.axios.get('/api/getBubbleDestIpLink',
+      {params: {
+          hours: '2013-04-10 15:00:00'
+        }})
+      .then((res) => {
+        let bubbleData = res.data.slice(0, 20);
+        bubbleData.forEach((item, index) => {
+          item.totalItem = item.destIpLink;
           item.dimension = item.destIp;
           item.yAxis = 3;
           item.xAxis = index + 1;
           this.heatDestIpLinkData.push(Object.values(item).reverse());
         });
-        this.heatDestIpLinkData = this.heatDestIpLinkData.slice(0, 20);
-        this.instances.push(this.heatDestIpLinkData);
-        // console.log('热力图--srcIp数据--连接数', res.data);
-        // res.data.forEach((item, index) => {
-        //   item.totalItem = item.destIpLinkCount;
-        //   item.dimension = item.destIp;
-        // });
-        // this.heatDestIpLinkData = res.data;
-        // this.heatDestIpLinkOption.showChart = true;
+        // this.instances.push(this.heatDestIpLinkData);
+        this.instances = Object.assign(this.instances, {destIpLink: this.heatDestIpLinkData});
+
+        // 气泡图大小间隔自动调节
+        let interval = (bubbleData[0].destIpLink / 40).toFixed();
+        this.intervalFlag = Object.assign({}, this.intervalFlag, {destIpLinkInterval: interval});
       });
     },
-    getHeatDestPortLink() {
-      this.axios.get('/api/getHeatDestPortLink0214').then((res) => {
-        res.data.forEach((item, index) => {
-          item.totalItem = item.destPortLinkCount;
+    getBubbleDestPortLink() {
+      this.axios.get('/api/getBubbleDestPortLink',
+      {params: {
+          hours: '2013-04-10 15:00:00'
+        }})
+      .then((res) => {
+        let bubbleData = res.data.slice(0, 20);
+        bubbleData.forEach((item, index) => {
+          item.totalItem = item.destPortLink;
           item.dimension = item.destPort;
           item.yAxis = 4;
           item.xAxis = index + 1;
           this.heatDestPortLinkData.push(Object.values(item).reverse());
         });
-        this.heatDestPortLinkData = this.heatDestPortLinkData.slice(0, 20);
-        this.instances.push(this.heatDestPortLinkData);
-        // console.log('热力图--srcIp数据--连接数', res.data);
-        // res.data.forEach((item, index) => {
-        //   item.totalItem = item.destPortLinkCount;
-        //   item.dimension = item.destPort;
-        // });
-        // this.heatDestPortLinkData = res.data;
-        // this.heatDestPortLinkOption.showChart = true;
+        // this.instances.push(this.heatDestPortLinkData);
+        this.instances = Object.assign(this.instances, {destPortLink: this.heatDestPortLinkData});
+
+        // 气泡图大小间隔自动调节
+        let interval = (bubbleData[0].totalItem / 40).toFixed();
+        this.intervalFlag = Object.assign({}, this.intervalFlag, {destPortLinkInterval: interval});
       });
     },
-    getHeatSrcIpActivePort() {
-      this.axios.get('/api/getHeatSrcIpActivePort0214').then((res) => {
+    getBubbleSrcIpActivePort() {
+      this.axios.get('/api/getBubbleSrcIpPort',
+      {params: {
+          hours: '2013-04-10 15:00:00'
+        }})
+      .then((res) => {
         res.data.forEach((item, index) => {
-          item.totalItem = item.srcIpActivePort;
+          item.totalItem = item.activePort;
           item.dimension = item.srcIp;
           item.yAxis = 5;
           item.xAxis = index + 1;
           this.heatSrcIpActivePortData.push(Object.values(item).reverse());
         });
         this.heatSrcIpActivePortData = this.heatSrcIpActivePortData.slice(0, 20);
-        this.instances.push(this.heatSrcIpActivePortData);
-        // console.log('热力图--srcIp数据--连接数', res.data);
-        // res.data.forEach((item, index) => {
-        //   item.totalItem = item.srcIpActivePort;
-        //   item.dimension = item.srcIp;
-        // });
-        // this.heatSrcIpActivePortData = res.data;
-        // this.heatSrcIpActivePortOption.showChart = true;
+        // this.instances.push(this.heatSrcIpActivePortData);
+        this.instances = Object.assign(this.instances, {srcIpActivePort: this.heatSrcIpActivePortData});
+
+        // 气泡图大小间隔自动调节
+        let interval = (res.data[0].activePort / 40).toFixed();
+        this.intervalFlag = Object.assign({}, this.intervalFlag, {srcIpPortInterval: interval});
       });
     },
-    getHeatDestIpActivePort() {
-      this.axios.get('/api/getHeatDestIpActivePort0214').then((res) => {
+    getBubbleDestIpActivePort() {
+      this.axios.get('/api/getBubbleDestIpPort',
+      {params: {
+          hours: '2013-04-10 15:00:00'
+        }})
+      .then((res) => {
         res.data.forEach((item, index) => {
-          item.totalItem = item.destIpActivePort;
+          item.totalItem = item.activePort;
           item.dimension = item.destIp;
           item.yAxis = 6;
           item.xAxis = index + 1;
           this.heatDestIpActivePortData.push(Object.values(item).reverse());
         });
         this.heatDestIpActivePortData = this.heatDestIpActivePortData.slice(0, 20);
-        this.instances.push(this.heatDestIpActivePortData);
-        console.log('最终气泡图数据', this.instances);
-        // console.log('热力图--srcIp数据--连接数', res.data);
-        // res.data.forEach((item, index) => {
-        //   item.totalItem = item.destIpActivePort;
-        //   item.dimension = item.destIp;
-        // });
-        // this.heatDestIpActivePortData = res.data;
-        // this.heatDestIpActivePortOption.showChart = true;
+        // this.instances.push(this.heatDestIpActivePortData);
+        this.instances = Object.assign(this.instances, {destIpActivePort: this.heatDestIpActivePortData});
+
+        // 气泡图大小间隔自动调节
+        let interval = (res.data[0].activePort / 40).toFixed();
+        this.intervalFlag = Object.assign({}, this.intervalFlag, {destIpPortInterval: interval});
       });
     },
   }
@@ -311,10 +322,12 @@ export default {
 <style lang="less">
 .detail-wrap {
   // color: white;
-    top: 80px;
     position: relative;
+    top: 80px;
     height: 100%;
-    background-color: #f1f1f1;
+    padding-top: 40px;
+    // background-color: #f1f1f1;
+    background-color: #001832;
       .chart-wrap {
         // height: 400px;
         margin: 20px 10px;
@@ -323,48 +336,6 @@ export default {
         border-radius: 4px;
         -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.3);
         box-shadow: 0 1px 1px rgba(0,0,0,.3);
-      }
-      .report-wrap {
-        height: 400px;
-        margin: 20px 10px;
-        background-color: #fff;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.3);
-        box-shadow: 0 1px 1px rgba(0,0,0,.3);
-        .report-list-top {
-          display: inline-block;
-          width: 200px;
-          text-align: left;
-          margin: 15px 0;
-          li {
-            padding: 5px 5px;
-          }
-          .src-ip-circle {
-            list-style-type: disc;
-            list-style-position: inside;
-            line-height: 20px;
-            font-size: 30px;
-            span {
-              color: black;
-              vertical-align: top;
-              line-height: 20px;
-              font-size: 12px;
-            }
-          }
-        }
-        .report-list-top:first-of-type > .src-ip-circle{
-          color: #C5473D;
-        }
-        .report-list-top:nth-of-type(2) > .src-ip-circle {
-          color: #384B5A;
-        }
-        .report-list-top:nth-of-type(3) > .src-ip-circle {
-          color: #7AAEB6;
-        }
-        .report-list-top:nth-of-type(4) > .src-ip-circle {
-          color: #DD9375;
-        }
       }
   // border: 1px solid green;
   .detail-row {

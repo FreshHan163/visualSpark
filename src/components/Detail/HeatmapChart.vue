@@ -22,7 +22,7 @@ export default {
   name: 'HeatmapChart',
   data () {
     return {
-      instances: [], //最终对象数组
+      instances: [],
       heatSrcIpData: [],
       heatSrcPortData: [],
       heatDestIpData: [],
@@ -43,40 +43,55 @@ export default {
     },
     getHeatmapData() {
       return new Promise((resolve, reject) => {
+        this.getHeatSrcPort();
         this.getHeatSrcIp();
         this.getHeatDestIp();
         this.getHeatDestPort();
-        this.getHeatSrcPort();
         resolve();
       });
     },
     getHeatSrcIp() {
-      this.axios.get('/api/getHeatSrcIp').then((res) => {
+      this.axios.get('/api/getHeatSrcIp',
+        {params: {
+          hours: '2013-04-10 15:00:00'
+        }})
+      .then((res) => {
         this.heatSrcIpData = res.data.slice(0, 20);
         console.log('热力图--srcIp数据', this.heatSrcIpData);
         this.instances = Object.assign({}, {srcIp: res.data.slice(0, 5)});
       });
     },
     getHeatSrcPort() {
-      this.axios.get('/api/getHeatSrcPort').then((res) => {
+      this.axios.get('/api/getHeatSrcPort',
+      {params: {
+          hours: '2013-04-10 15:00:00'
+        }})
+      .then((res) => {
         this.heatSrcPortData = res.data.slice(0, 20);
         console.log('热力图--srcPort数据', this.heatSrcPortData);
         this.instances = Object.assign(this.instances, {srcPort: res.data.slice(0, 5)});
       });
     },
     getHeatDestIp() {
-      this.axios.get('/api/getHeatDestIp').then((res) => {
+      this.axios.get('/api/getHeatDestIp',
+      {params: {
+          hours: '2013-04-10 15:00:00'
+        }})
+      .then((res) => {
         this.heatDestIpData = res.data.slice(0, 20);
         console.log('热力图--destIp数据', this.heatDestIpData);
         this.instances = Object.assign(this.instances, {destIp: res.data.slice(0, 5)});
       });
     },
     getHeatDestPort() {
-      this.axios.get('/api/getHeatDestPort').then((res) => {
+      this.axios.get('/api/getHeatDestPort',
+      {params: {
+          hours: '2013-04-10 15:00:00'
+        }})
+      .then((res) => {
         this.heatDestPortData = res.data.slice(0, 20);
         console.log('热力图--destPort数据', this.heatDestPortData);
         this.instances = Object.assign(this.instances, {destPort: res.data.slice(0, 5)});
-        // console.log('最终的对象数组', this.instances);
       });
     },
     drawHeatmap () {
@@ -117,16 +132,16 @@ export default {
         }
       }
       this.heatSrcIpData.forEach((item, index) => {
-        srcIpData[index].push(item.srcAllBytes);
+        srcIpData[index].push(item.srcBytes);
       });
       this.heatSrcPortData.forEach((item, index) => {
-        srcPortData[index].push(item.srcAllBytes);
+        srcPortData[index].push(item.srcBytes);
       });
       this.heatDestIpData.forEach((item, index) => {
-        destIpData[index].push(item.destAllBytes);
+        destIpData[index].push(item.destBytes);
       });
       this.heatDestPortData.forEach((item, index) => {
-        destPortData[index].push(item.destAllBytes);
+        destPortData[index].push(item.destBytes);
       });
       // this.instances = Object.assign({}, {srcIp: srcIpData}, {srcPort: srcPortData}, {destIp: destIpData}, {destPort: destPortData});
       console.log('生成instances', this.instances);
@@ -341,6 +356,17 @@ export default {
                 }
               }
             ],
+            // visualMap: {
+            //     min: 10000,
+            //     max: 100000000,
+            //     calculable: true,
+            //     orient: 'horizontal',
+            //     left: 'center',
+            //     bottom: '0',
+            //     inRange: {
+            //       color: ['#9D409C','#7769CE','#45AE37'].reverse(),
+            //     }
+            // },
             visualMap: [{
                 min: 10000,
                 max: 100000000,
@@ -356,6 +382,18 @@ export default {
             }, {
                 min: 10000,
                 max: 100000000,
+                // inRange: {
+                //     color: ['grey'],
+                //     opacity: [0, 0.3]
+                // },
+                // controller: {
+                //     inRange: {
+                //         opacity: [0.3, 0.6]
+                //     },
+                //     outOfRange: {
+                //         color: '#ccc'
+                //     }
+                // },
                 calculable: true,
                 seriesIndex: [1, 3],
                 orient: 'horizontal',
@@ -383,6 +421,7 @@ export default {
                 tooltip: {
                     position: 'top',
                     formatter: (params) => {
+                        console.log(params);
                         var res = params.seriesName + '<br/>';
                         let subIndex = params.data[0] * 2 + params.data[1];
                         res += this.heatSrcIpData[subIndex].srcIp;

@@ -54,6 +54,229 @@ var sqlNewChart = {
     FROM
       dw_para_pkt0410
     ORDER BY hours, countServer`,
-    }
+    queryHeatSrcIp: `
+      SELECT
+        *
+      FROM
+        dw_heat_srcIp0410
+      WHERE
+        hours = ?
+      ORDER By
+        srcBytes
+      DESC
+      LIMIT 0, 100`,
+    queryHeatSrcPort: `
+      SELECT
+        *
+      FROM
+        dw_heat_srcPort0410
+      WHERE
+        hours = ?
+      ORDER By
+        srcBytes
+      DESC
+      LIMIT 0, 100`,
+      queryHeatDestIp: `
+      SELECT
+        *
+      FROM
+        dw_heat_destIp0410
+      WHERE
+        hours = ?
+      ORDER By
+        destBytes
+      DESC
+      LIMIT 0, 100`,
+    queryHeatDestPort: `
+    SELECT
+      *
+    FROM
+      dw_heat_destPort0410
+    WHERE
+      hours = ?
+    ORDER By
+      destBytes
+    DESC
+    LIMIT 0, 100`,
+    // 气泡图
+    queryBubbleDestIpLink: `
+    SELECT
+      *
+    FROM
+      dw_bubble_link_destIp0410
+    WHERE
+      hours = ?
+    ORDER By
+      destIpLink
+    DESC
+    LIMIT 0, 100`,
+    queryBubbleDestPortLink: `
+    SELECT
+      *
+    FROM
+      dw_bubble_link_destPort0410
+    WHERE
+      hours = ?
+    ORDER By
+      destPortLink
+    DESC
+    LIMIT 0, 100`,
+    queryBubbleSrcIpLink: `
+    SELECT
+      *
+    FROM
+      dw_bubble_link_srcIp0410
+    WHERE
+      hours = ?
+    ORDER By
+      srcIpLink
+    DESC
+    LIMIT 0, 100`,
+    queryBubbleSrcPortLink: `
+    SELECT
+      *
+    FROM
+      dw_bubble_link_srcPort0410
+    WHERE
+      hours = ?
+    ORDER By
+      srcPortLink
+    DESC
+    LIMIT 0, 100`,
+    queryBubbleDestIpPort: `
+    SELECT
+      *
+    FROM
+      dw_bubble_port_destIp0410
+    WHERE
+      hours = ?
+    ORDER By
+      activePort
+    DESC
+    LIMIT 0, 100`,
+    queryBubbleSrcIpPort: `
+    SELECT
+      *
+    FROM
+      dw_bubble_port_srcIp0410
+    WHERE
+      hours = ?
+    ORDER By
+      activePort
+    DESC
+    LIMIT 0, 100`,
+    querySrcIp: `
+    SELECT
+      t1.hours as hours,
+      if(t2.total is null,0,t2.total) as total
+    FROM(
+        SELECT
+          hours
+        FROM
+          dw_log_mid0410
+        GROUP BY
+          hours
+        ORDER BY
+          hours
+      ) t1
+      left join
+      (
+        SELECT
+          hours, srcIp, sum(srcTotalBytes) as total
+        FROM
+          dw_log_mid0410
+        where
+          srcIp = ?
+        group by
+          hours, srcIp
+      ) t2
+      on t1.hours = t2.hours
+    ORDER BY
+      hours`,
+      queryDestIp: `
+      SELECT
+        t1.hours as hours,
+        if(t2.total is null,0,t2.total) as total
+      FROM(
+          SELECT
+            hours
+          FROM
+            dw_log_mid0410
+          GROUP BY
+            hours
+          ORDER BY
+            hours
+        ) t1
+        left join
+        (
+          SELECT
+            hours, destIp, sum(destTotalBytes) as total
+          FROM
+            dw_log_mid0410
+          where
+            destIp = ?
+          group by
+            hours, destIp
+        ) t2
+        on t1.hours = t2.hours
+      ORDER BY
+        hours`,
+      querySrcPort: `
+      SELECT
+        t1.hours as hours,
+        if(t2.total is null,0,t2.total) as total
+      FROM(
+          SELECT
+            hours
+          FROM
+            dw_log_mid0410
+          GROUP BY
+            hours
+          ORDER BY
+            hours
+        ) t1
+        left join
+        (
+          SELECT
+            hours, srcPort, sum(srcTotalBytes) as total
+          FROM
+            dw_log_mid0410
+          where
+            srcPort = ?
+          group by
+            hours, srcPort
+        ) t2
+        on t1.hours = t2.hours
+      ORDER BY
+        hours`,
+      queryDestPort: `
+      SELECT
+        t1.hours as hours,
+        if(t2.total is null,0,t2.total) as total
+      FROM(
+          SELECT
+            hours
+          FROM
+            dw_log_mid0410
+          GROUP BY
+            hours
+          ORDER BY
+            hours
+        ) t1
+        left join
+        (
+          SELECT
+            hours, destPort, sum(destTotalBytes) as total
+          FROM
+            dw_log_mid0410
+          where
+          destPort = ?
+          group by
+            hours, destPort
+        ) t2
+        on t1.hours = t2.hours
+      ORDER BY
+        hours`,
+    },
   }
   module.exports = sqlNewChart;
