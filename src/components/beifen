@@ -1,0 +1,739 @@
+/**
+ * @file 上传至教学空间
+ * @author
+ */
+/* eslint-disable fecs-camelcase, camelcase */
+import React from 'react';
+import {connect} from 'react-redux';
+import moment from 'moment';
+import {Category, Resource} from '@src/actions/espace';
+import {SOURCE_FROM, DOC_TYPE} from '../../constants';
+import {toast} from '../SpaceDialog';
+import {post} from '@src/actions/fetch';
+import './index.scss';
+import {udalog} from '@src/pages/shared/log';
+import {uploadinit, uploadcomplete} from '@src/actions/espace/upload';
+import {uploadSelectSubModal} from '@src/pages/EduSpace/widget/Region/RegionShareModal';
+
+const MaxSize = 50;
+const SPMaxSize = 200;
+const UPLOAD_CHUNK_SIZE = 6 * 1024 * 1024;
+export const UPLOAD_STATUS = {
+    INITAL: 'inital',
+    QUEUE: 'queue',
+    PROGRESS: 'progress',
+    RETRY: 'retry',
+    // 上传失败
+    FAIL: 'fail',
+    // 重复资源
+    REPEAT: 'repeat',
+    // 上传成功，转码失败
+    ERROR: 'error',
+    // 上传成功，转码中
+    CODING: 'coding',
+    // 上传成功
+    SUCCESS: 'success'
+};
+
+// 上传的资源没有存储于后端
+export const isNoStorage = uploadStatus => {
+    return [
+        UPLOAD_STATUS.FAIL,
+        UPLOAD_STATUS.REPEAT
+    ].includes(uploadStatus);
+};
+
+const acceptExtension = [
+    ['docx', 'doc', 'xlsx', 'ppt', 'pptx', 'pdf', 'xls', 'txt'],
+    ['jpg', 'gif', 'png', 'jpeg'],
+    ['mp3']
+];
+
+// 'image', 'doc', 'audio', 'video'
+const getTypeByExt = ext => {
+    ext = ext.toLowerCase();
+    if (acceptExtension[1].includes(ext)) {
+        return 'image';
+    } else if (acceptExtension[2].includes(ext)) {
+        return 'audio';
+    } else if (acceptExtension[0].includes(ext)) {
+        return 'doc';
+    }
+    return '';
+};
+
+// FileIcon 类型前端判断
+const getFileIconTypeByExt = ext => {
+    ext = ext.toLowerCase();
+    let extArr = {
+        pic: ['jpg', 'gif', 'png', 'jpeg'],
+        doc: ['docx', 'doc'],
+        pdf: ['pdf'],
+        ppt: ['ppt', 'pptx'],
+        xls: ['xlsx', 'xls'],
+        txt: ['txt'],
+        audio: ['mp3', 'mp4']
+    };
+    if (extArr['pic'].includes(ext)) {
+        return 'pic';
+    } else if (extArr['doc'].includes(ext)) {
+        return 'doc';
+    } else if (extArr['pdf'].includes(ext)) {
+        return 'pdf';
+    } else if (extArr['ppt'].includes(ext)) {
+        return 'ppt';
+    } else if (extArr['xls'].includes(ext)) {
+        return 'xls';
+    } else if (extArr['txt'].includes(ext)) {
+        return 'txt';
+    } else if (extArr['audio'].includes(ext)) {
+        return 'audio';
+    }
+    return '';
+};
+
+const getDocTypeFromExt = ext => {
+    if (/^docx?$/.test(ext)) {
+        return DOC_TYPE.doc;
+    } else if (/^pptx?$/.test(ext)) {
+        return DOC_TYPE.ppt;
+    } else if (/^(xls|xlsx)$/.test(ext)) {
+        return DOC_TYPE.excel;
+    } else if (/^(jpg|gif|png|jpeg)$/.test(ext)) {
+        return DOC_TYPE.pic;
+    } else if (/^(mp3|wma|wav)$/.test(ext)) {
+        return DOC_TYPE.audio;
+    }
+    return DOC_TYPE[ext];
+};
+
+export class Button extends React.PureComponent {
+    constructor(props) {
+        super(props);
+    }
+
+    componentDidMount() {
+        this.initUploader();
+    }
+
+    componentWillUnmount() {
+        const uploader = this.WebUploader;
+
+        if (uploader) {
+            this.uploader.off('fileQueued', this.handleFileQueued);
+            this.uploader.off('uploadBeforeSend', this.handleUploadBeforeSend);
+            this.uploader.off('uploadProgress', this.handleUploadProgress);
+            // this.uploader.off('uploadSuccess', this.handleUploadSuccess);
+            this.uploader.off('uploadError', this.handleUploadError);
+            this.uploader.off('uploadAccept', this.handleUploadAccept);
+            window[this.props.id] = null;
+        }
+    }
+
+    initUploader() {
+        let {
+            id,
+            server,
+            chunked,
+            chunkSize,
+            fileNumLimit,
+            fileSingleSizeLimit
+        } = this.props;
+        // 如果当前为区校空间-共享空间内的上传功能,则对上传设置做修改: 单文件上传/200M限制/允许Mp4
+        let isMultiple = true;
+        if (this.props.isShareSpace) {
+            isMultiple = !this.props.isShareSpace;
+        }
+        // 区校空间、一课一空间、自创空间，都允许上传视频，最大限制为200M
+        fileSingleSizeLimit = SPMaxSize * 1024 * 1024;
+        let acceptExt = acceptExtension;
+        acceptExt[2].push('mp4');
+
+        const mimeTypes = acceptExt.join().split(',').map(i => '.' + i).join(',');
+        this.uploader = window[id] = window.WebUploader.create({
+            auto: false,
+            swf: '/Uploader.swf',
+            server,
+            pick: {
+                id: `#${id}`,
+                multiple: isMultiple
+            },
+            accept: {
+                extensions: acceptExt.join(','),
+                mimeTypes
+            },
+            threads: 1,
+            fileSingleSizeLimit,
+            fileNumLimit,
+            chunkSize,
+            chunked
+        });
+        // this.uploader.on('beforeFileQueued', this.handleBeforeFileQueued);
+        this.uploader.on('fileQueued', this.handleFileQueued);
+        this.uploader.on('filesQueued', this.handleFilesQueue);
+        this.uploader.on('uploadBeforeSend', this.handleUploadBeforeSend);
+        this.uploader.on('uploadProgress', this.handleUploadProgress);
+        // this.uploader.on('uploadSuccess', this.handleUploadSuccess);
+        this.uploader.on('uploadError', this.handleUploadError);
+        this.uploader.on('error', this.handleError);
+        this.uploader.on('uploadAccept', this.handleUploadAccept);
+    }
+
+
+    handleBeforeFileQueued = this.props.beforeFileQueued;
+
+    handleFilesQueue = this.props.filesQueue;
+
+    handleUploadBeforeSend = this.props.uploadBeforeSend
+
+    handleUploadProgress = this.props.uploadProgress
+
+    handleUploadError = this.props.uploadError;
+
+    handleError = this.props.error;
+
+    handleUploadAccept = this.props.uploadAccept;
+
+    handleFileQueued = this.props.fileQueued;
+
+    handleUploadSuccess = (file, response) => {
+        this.props.uploadSuccess && this.props.uploadSuccess(file, response);
+    }
+
+    click = () => {
+        udalog({a: 700146, t: this.props.id});
+    }
+
+    render() {
+        const {id, title, disabled, filetype, filename} = this.props;
+        return (
+            <React.Fragment>
+                <div id={id} className="upload-button" onClick={this.click}>
+                    {title}
+                </div>
+            </React.Fragment>
+        );
+    }
+}
+Button.defaultProps = {
+    id: 'es-upload',
+    title: '上传文件',
+    // server: '/api/p/resource/file/upload',
+    // server: '/api/p/eduspace/category/list',
+    server: '/api/p/resource/file/multiple',
+    fileNumLimit: 20,
+    fileSingleSizeLimit: MaxSize * 1024 * 1024,
+    chunkSize: UPLOAD_CHUNK_SIZE,
+    chunked: true
+};
+
+class Upload extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            showUploadSelectSubject: false
+        };
+    }
+    transcodingIds = []
+    timer = undefined
+
+    componentWillUnmount() {
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+    }
+
+    getResourceData = file => {
+        const format = getDocTypeFromExt(file.ext);
+        const categoryId = this.props.categoryId;
+        const now = moment.now();
+        const time = Math.floor(now / 1000);
+        let name = file.name;
+        const lastIndex = name.lastIndexOf('.');
+        name = name.substring(0, lastIndex);
+        const data = {
+            file,
+            uploadId: file.id,
+            fileId: file.id,
+            resource_id: file.id,
+            category_id: categoryId,
+            update_time: time,
+            create_time: time,
+            source_format: format,
+            source_from: SOURCE_FROM.UPLOAD,
+            source_info: {
+                name: name,
+                img_url: format === DOC_TYPE.audio
+                    ? require('../../assets/default-audio.png')
+                    : require('../../assets/default-doc.png')
+            },
+            upload_status: UPLOAD_STATUS.INITAL,
+            // status: UPLOAD_STATUS.INITAL,
+            upload_errmsg: ''
+        };
+        return data;
+    }
+
+    getResourceById = (categoryId, resourceId, reverse) => {
+        const category = this.props.categorys[categoryId];
+        const originSources = Object.assign([], category.source);
+        const sources = reverse ? originSources.reverse() : originSources;
+        const targetSource = sources.filter(s =>
+            s.resource_id === resourceId);
+        if (targetSource && targetSource.length > 0) {
+            return targetSource[0];
+        }
+        return {};
+    }
+
+    beforeFileQueued = file => {
+        // 文件入上传队列前检查，如果为共享空间，现要求选择课节类型
+        // window[this.props.id].stop(true);
+        // setTimeout(val => {
+        //     console.log(this.props.id, '2000ms 后显示');
+        //     window[this.props.id].upload();
+        // }, 2000);
+    }
+
+    fileQueue = file => {
+        const {
+            categoryId,
+            addCategoryUploadResource
+        } = this.props;
+        const data = this.getResourceData(file);
+
+        data.upload_status = UPLOAD_STATUS.QUEUE;
+
+        addCategoryUploadResource(categoryId, data);
+    }
+
+    async makeMd5(file) {
+        return window[this.props.id].md5File(file).then(val => {
+            return val;
+        });
+    }
+    fileQueued = async file => {
+        const isShareSpace = this.props.isShareSpace;
+        const md5 = await this.makeMd5(file);
+        let that = this;
+        file.hash = md5;
+        const {
+            categoryId,
+            spaceId,
+            addCategoryUploadResource,
+            updateUploadResource
+        } = this.props;
+        let param = {
+            file_name: file.name,
+            type: getTypeByExt(file.ext),
+            content_md5: md5,
+            space_id: spaceId,
+            category_id: categoryId
+        };
+        new Promise(async (res, rej) => {
+            // 共享空间文件入队后，弹出课节类型选择弹窗
+            if (isShareSpace) {
+                this.setState({
+                    showUploadSelectSubject: true,
+                    filetype: getFileIconTypeByExt(file.ext),
+                    filename: file.name,
+                    fileid: file.id
+                });
+                let dialogx;
+                let that = this;
+                const DialogM = uploadSelectSubModal(
+                    () => {
+                        that.cancelUpload.bind(that, file.id);
+                        dialogx.close();
+                    },
+                    () => {
+                        res();
+                        dialogx.close();
+                    },
+                    getFileIconTypeByExt(file.ext),
+                    file.name
+                );
+
+                dialogx = new DialogM();
+                dialogx.popup();
+            } else {
+                res();
+            }
+        })
+            .then(() => {
+                let type = file.ext === 'mp4' ? 'video' : getTypeByExt(file.ext);
+                param.type = type;
+
+                // 共享空间，上传时带上科目参数
+                if (isShareSpace) {
+                    // let type = file.ext === 'mp4' ? 'video' : getTypeByExt(file.ext);
+                    param.subject = this.props.cursub;
+                    // param.type = type;
+                }
+            })
+            .then(() => uploadinit(param))
+            .then(res => {
+                // 共享空间所有文件进入上传队列后提示在等待
+                if (isShareSpace) {
+                    // 每次上传文件总共大于10M的提示
+                    const totalSize = file.size;
+                    if (totalSize > 10 * 1024 * 1024
+                        && totalSize <= SPMaxSize * 1024 * 1024) {
+                        toast('上传过程中，请不要离开本页面哦', 3000);
+                    }
+                    udalog({a: 700147, t: file && file.length ? file.length : 0});
+                }
+                if (res.error === 0) {
+                    const response = res.data;
+                    if (response.is_repeated) {
+                        // 资源重复（同一空间）
+                        const data = this.getResourceData(file);
+                        data.upload_status = UPLOAD_STATUS.REPEAT;
+                        data.upload_errmsg = '该资源已上传';
+                        addCategoryUploadResource(categoryId, data);
+                    }
+                    else if (response.is_repeated === false
+                        && response.upload_id === '') {
+                        // 资源已上传
+                        Resource.getSpaceResourceDetail(spaceId, response.resource_id).then(data => {
+                            const status = ~~data.status;
+                            if ([0, 3, 4].includes(status)) {
+                                data.upload_status = UPLOAD_STATUS.ERROR;
+                                data.upload_errmsg = '转码失败';
+                            } else if (status === 2) {
+                                data.upload_status = UPLOAD_STATUS.SUCCESS;
+                                data.upload_errmsg = '';
+                            }
+                            else if (status === 5) {
+                                data.upload_status = UPLOAD_STATUS.CODING;
+                                data.upload_errmsg = '';
+                            }
+                            else if (status === 1) {
+                                data.upload_status = UPLOAD_STATUS.PROGRESS;
+                                data.upload_errmsg = '';
+                            }
+                            addCategoryUploadResource(categoryId, data);
+                        });
+                    }
+                    else {
+                        this.fileQueue && this.fileQueue(file);
+                        file.upload_id = response.upload_id;
+                        // setCookie(newFiles[index].name, param.uploadId);
+                        window[this.props.id].upload(file);
+                    }
+                }
+                else if (res.error === 5007) {
+                    toast('资源数目已达50', 3000);
+                }
+            });
+    };
+
+    filesQueue = files => {
+        const isShareSpace = this.props.isShareSpace;
+        // 非共享空间所有文件进入上传队列后提示在等待
+        if (!isShareSpace) {
+            // 每次上传文件总共大于10M的提示
+            const totalSize = files.reduce((total, curr) => total + curr.size, 0);
+            if (totalSize > 10 * 1024 * 1024
+                // && totalSize <= MaxSize * 1024 * 1024) {
+                // 上传视频大小限制为 200M
+                && totalSize <= SPMaxSize * 1024 * 1024) {
+                toast('上传过程中，请不要离开本页面哦', 3000);
+            }
+            udalog({a: 700147, t: files && files.length ? files.length : 0});
+        }
+    }
+
+    uploadBeforeSend = (object, data, headers) => {
+        const file = object.file;
+        data.file_name = file.name;
+        data.hash = file.hash;
+        // 文件类型 'image', 'doc', 'audio', 'video'
+        data.type = getTypeByExt(file.ext);
+        if (!data.type) {
+            window[this.props.id].cancelFile(file);
+        }
+        data.ext = file.ext;
+        data.space_id = this.props.spaceId;
+        data.category_id = this.props.categoryId;
+
+        data.part_number = object.chunk + 1;
+        data.part_count = object.chunks;
+        data.partSize = object.blob.size;
+        data.start = object.start;
+        data.upload_id = object.file.upload_id;
+        // data.name = file.name + '|' + 'edutest' + '|' + file.hash;
+    }
+
+    uploadProgress = (file, progress) => {
+        const data = this.getResourceById(this.props.categoryId, file.id);
+        data.progress = progress;
+        data.upload_status = UPLOAD_STATUS.PROGRESS;
+
+        this.props.updateUploadResource(this.props.categoryId, data);
+    }
+
+    uploadAccept = (object, ret) => {
+        const file = object.file;
+        const data = this.getResourceById(this.props.categoryId, file.id);
+        const chunk = object.chunk + 1;
+        if (ret.error === 0) {
+            if (chunk === object.chunks) {
+                // const type = getTypeByExt(file.ext);
+                let type = file.ext === 'mp4' ? 'video' : getTypeByExt(file.ext);
+                let param = {
+                    file_name: file.name,
+                    file_size: file.size,
+                    type,
+                    space_id: this.props.spaceId,
+                    category_id: this.props.categoryId,
+                    upload_id: file.upload_id,
+                    part_count: object.chunks
+                };
+                let isShareSpace = this.props.isShareSpace;
+                // 共享空间，上传时带上科目参数
+                // if (isShareSpace) {
+                //     let type = file.ext === 'mp4' ? 'video' : getTypeByExt(file.ext);
+                //     param.type = type;
+                //     param.subject = this.props.cursub;
+                // }
+                if (isShareSpace) {
+                    param.subject = this.props.cursub;
+                }
+                uploadcomplete(param).then(response => {
+                    if (response) {
+                        const result = response || {};
+                        data.resource_id = result.resource_id;
+                        data.uploadId = result.resource_id;
+                        data.source_info = data.source_info || {};
+                        if (result.thumbnail_url) {
+                            data.source_info.img_url = result.thumbnail_url;
+                        }
+                        if (result.resource_url) {
+                            data.source_info.bos_url = result.resource_url;
+                        }
+
+                        if (result.is_repeated) {
+                            data.uploadId += ':' + data.fileId;
+                            data.upload_status = UPLOAD_STATUS.REPEAT;
+                            data.upload_errmsg = '该资源已上传';
+                        } else if (type === 'image' || type === 'audio') {
+                            data.upload_status = UPLOAD_STATUS.SUCCESS;
+                        } else {
+                            data.upload_status = UPLOAD_STATUS.PROGRESS;
+                        }
+
+                        if (data.upload_status === UPLOAD_STATUS.PROGRESS) {
+                            // 检查文档类型文件的状态
+                            this.setFileStatusTimer(data.resource_id);
+                        }
+                        // 区校空间-上传资源人数打点
+                        if (this.props.isShareSpace) {
+                            const {orgId, cursub, userId, spaceId} = this.props;
+                            udalog({
+                                a: 700222,
+                                userid: userId,
+                                orgid: orgId,
+                                subjectid: cursub,
+                                spaceid: spaceId
+                            });
+                        }
+                    }
+                    else {
+                        data.uploadId += ':' + data.fileId;
+                        data.upload_status = UPLOAD_STATUS.FAIL;
+                    }
+                    this.props.updateUploadResource(this.props.categoryId, data);
+                });
+            }
+        }
+    }
+
+    uploadError = (file, reason) => {
+        const data = this.getResourceById(this.props.categoryId, file.id);
+
+        data.upload_status = UPLOAD_STATUS.FAIL;
+
+        this.props.updateUploadResource(this.props.categoryId, data);
+    }
+
+    setFileStatusTimer = resourceId => {
+        if (!this.transcodingIds.includes(resourceId)) {
+            this.transcodingIds.push(resourceId);
+        }
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+        this.timer = setInterval(() => {
+            this.updateTransCodingStatus();
+        }, 2000);
+    }
+
+    updateTransCodingStatus = async () => {
+        const resourceIds = this.transcodingIds.join(',');
+        if (!resourceIds && this.timer) {
+            clearInterval(this.timer);
+        }
+        let result = [];
+        try {
+            result = await post('/api/p/resource/file/polling', {resource_ids: resourceIds});
+            if (result.error === 0) {
+                result = result.data;
+            }
+        } catch (e) {
+            console.warn(e);
+        }
+
+        result.forEach((r, i) => {
+            const data = this.getResourceById(r.category_id, r.resource_id, true);
+            const status = ~~r.status;
+            /*
+                r.status
+                转码中：5
+                正常：2
+                异常：0(非法)，3(异常)，4(删除)
+                上传中：1
+             */
+            if ([0, 3, 4].includes(status)) {
+                data.upload_status = UPLOAD_STATUS.ERROR;
+                data.upload_errmsg = '转码失败';
+            } else if (status === 2) {
+                data.upload_status = UPLOAD_STATUS.SUCCESS;
+                data.upload_errmsg = '';
+                data.source_info.pay_verify_status = 0;
+            }
+            else if (status === 5) {
+                data.upload_status = UPLOAD_STATUS.CODING;
+                data.upload_errmsg = '';
+                data.trans_progress = r.trans_progress || {};
+            }
+            else if (status === 1) {
+                data.upload_status = UPLOAD_STATUS.PROGRESS;
+                data.upload_errmsg = '';
+                data.trans_progress = r.trans_progress || {};
+            }
+            this.props.updateUploadResource(this.props.categoryId, data);
+            if (![1, 5].includes(status)) {
+                const idx = this.transcodingIds.indexOf(r.resource_id);
+                this.transcodingIds.splice(idx, 1);
+            }
+        });
+    };
+
+    uploadSuccess = (file, response) => {
+        const data = this.getResourceById(this.props.categoryId, file.id);
+
+        if (response.error === 0) {
+            const type = getTypeByExt(file.ext);
+            const result = response.data || {};
+
+            data.resource_id = result.resource_id;
+            data.uploadId = result.resource_id;
+            data.source_info = data.source_info || {};
+            if (result.thumbnail_url) {
+                data.source_info.img_url = result.thumbnail_url;
+            }
+            if (result.resource_url) {
+                data.source_info.bos_url = result.resource_url;
+            }
+
+            if (result.is_repeated) {
+                data.uploadId += ':' + data.fileId;
+                data.upload_status = UPLOAD_STATUS.REPEAT;
+                data.upload_errmsg = '该资源已上传';
+            } else if (type === 'image' || type === 'audio') {
+                data.upload_status = UPLOAD_STATUS.SUCCESS;
+            } else {
+                data.upload_status = UPLOAD_STATUS.PROGRESS;
+            }
+
+            if (data.upload_status === UPLOAD_STATUS.PROGRESS) {
+                // 定时检查文档类型文件的状态
+                this.setFileStatusTimer(data.resource_id);
+            }
+        } else {
+            data.uploadId += ':' + data.fileId;
+            data.upload_status = UPLOAD_STATUS.FAIL;
+        }
+        this.props.updateUploadResource(this.props.categoryId, data);
+    }
+
+    error = type => {
+        // let sizeLimit = MaxSize;
+        // try {
+        //     sizeLimit = this.props.isShareSpace ? SPMaxSize : MaxSize;
+        // } catch (e) {
+        //     console.error(e);
+        // }
+        // 上传大小统一，视频限制为最大200M
+        let sizeLimit = SPMaxSize;
+        switch (type) {
+            case 'F_EXCEED_SIZE':
+                toast('文件太大，文件大小必须小于' + sizeLimit + 'M才能上传');
+                break;
+            case 'Q_EXCEED_NUM_LIMIT':
+                toast('附件数量已达20个上限');
+                break;
+            case 'Q_TYPE_DENIED':
+                toast('暂不支持该格式文件');
+        }
+    }
+
+    closeModal = () => {
+        this.setState({
+            showUploadSelectSubject: false
+        });
+    }
+
+    cancelUpload = fileid => {
+        // 隐藏弹窗，取消上传
+        window[this.props.id].cancelFile(fileid);
+    }
+
+    // continueUpload = () => {
+    //     // 隐藏弹窗,继续上传
+    //     this.continueUploadFn && this.continueUploadFn();
+    // }
+
+    render() {
+        return (
+            <Button
+                id={this.props.id}
+                title={this.props.title}
+                isShareSpace={this.props.isShareSpace}
+                showUploadSelectSubject={this.state.showUploadSelectSubject}
+                closeModal={this.closeModal.bind(this)}
+                cancelUpload={this.cancelUpload.bind(this, this.state.fileid)}
+                filename={this.state.filename}
+                filetype={this.state.filetype}
+                beforeFileQueued={this.beforeFileQueued}
+                fileQueue={this.fileQueue}
+                fileQueued={this.fileQueued.bind(this)}
+                filesQueue={this.filesQueue.bind(this)}
+                uploadProgress={this.uploadProgress}
+                uploadError={this.uploadError}
+                uploadSuccess={this.uploadSuccess}
+                uploadBeforeSend={this.uploadBeforeSend}
+                uploadAccept={this.uploadAccept.bind(this)}
+                error={this.error} />
+        );
+    }
+}
+
+export default connect(state => {
+    return {
+        categorys: state.espace.category.category_list,
+        cursub: state.espace.regionschool.curSub,
+        orgId: state.user.org_id,
+        userId: state.user.userId,
+        isShareSpace: state.espace.regionschool.isShareSpace
+    };
+}, (dispatch, props) => ({
+    getCategoryResource: (spaceId, categoryId, pn, rn) =>
+        dispatch(Category.getCategoryResource(spaceId, categoryId, pn, rn)),
+    addCategoryUploadResource: (categoryId, resourceData) =>
+        dispatch(Category.addCategoryUploadResource(categoryId, resourceData)),
+    updateUploadResource: (categoryId, resourceData) =>
+        dispatch(Category.updateUploadResource(categoryId, resourceData))
+}))(Upload);

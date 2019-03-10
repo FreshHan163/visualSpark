@@ -37,7 +37,6 @@ export default {
       let topChart = echarts.init(this.$refs.topChart);
       var data = this.instances;
       let interval = this.intervalFlag;
-      debugger
       console.log('气泡图', data);
       let topOption = {
           title: {
@@ -50,6 +49,9 @@ export default {
           legend: {
               left: 50,
               bottom: 10,
+            textStyle: {
+                color: 'white'
+            },
           },
           tooltip: {
               trigger: 'axis',
@@ -66,88 +68,96 @@ export default {
           },
           xAxis: {
             type: 'value',
-              splitLine: {
-                  lineStyle: {
-                      type: 'dashed'
-                  }
-              }
+            splitLine: {
+                lineStyle: {
+                    type: 'dashed'
+                }
+            },
+            axisLabel: {
+                textStyle: {
+                    color: 'white'
+                }
+            }
           },
           yAxis: {
             type: 'value',
             min: 0,
             gridIndex: 0,
-              splitLine: {
-                  lineStyle: {
-                      type: 'dashed'
-                  }
-              },
-              scale: true,
-              axisLabel: {
-                formatter: function(param) {
-                  var text = '';
-                  switch(param) {
-                    case 1:
-                      text = '源IP连接数';
-                      break;
-                    case 2:
-                      text = '源端口连接数';
-                      break;
-                    case 3:
-                      text = '目的IP连接数';
-                      break;
-                    case 4:
-                      text = '目的端口连接数';
-                      break;
-                    case 5:
-                      text = '源IP活跃端口数';
-                      break;
-                    case 6:
-                      text = '目的IP活跃端口数';
-                      break;
-                  }
-                  return text;
+            splitLine: {
+                lineStyle: {
+                    type: 'dashed'
                 }
-              }
+            },
+            scale: true,
+            axisLabel: {
+                formatter: function(param) {
+                    var text = '';
+                    switch(param) {
+                    case 1:
+                        text = '源IP连接数';
+                        break;
+                    case 2:
+                        text = '源端口连接数';
+                        break;
+                    case 3:
+                        text = '目的IP连接数';
+                        break;
+                    case 4:
+                        text = '目的端口连接数';
+                        break;
+                    case 5:
+                        text = '源IP活跃端口数';
+                        break;
+                    case 6:
+                        text = '目的IP活跃端口数';
+                        break;
+                    }
+                    return text;
+                },
+                textStyle: {
+                    color: 'white'
+                }
+            }
           },
           visualMap: [{
               show: false,
               seriesIndex: 0,
               dimension: 3, // 指向第三列（列序号从 0 开始记，所以设置为 2）。
               min: 0, // 需要给出数值范围，最小数值。
-              max: 3000, // 需要给出数值范围，最大数值。
+              max: 400, // 需要给出数值范围，最大数值。
               inRange: {
                   // 气泡尺寸：5 像素到 60 像素。
-                  symbolSize: [5, 50]
+                  symbolSize: [5, 40]
               }
           },{
               show: false,
               seriesIndex: 1,
               dimension: 3, // 指向第三列（列序号从 0 开始记，所以设置为 2）。
               min: 0, // 需要给出数值范围，最小数值。
-              max: 3000, // 需要给出数值范围，最大数值。
+              max: 400, // 需要给出数值范围，最大数值。
               inRange: {
                   // 气泡尺寸：5 像素到 60 像素。
-                  symbolSize: [5, 50]
+                  symbolSize: [5, 40]
               }
           },{
               show: false,
               seriesIndex: 2,
               dimension: 3, // 指向第三列（列序号从 0 开始记，所以设置为 2）。
               min: 0, // 需要给出数值范围，最小数值。
-              max: 10000, // 需要给出数值范围，最大数值。
+              max: 4000, // 需要给出数值范围，最大数值。
               inRange: {
                   // 气泡尺寸：5 像素到 60 像素。
-                  symbolSize: [5, 30]
+                  symbolSize: [5, 40]
               }
           },{
               show: false,
               seriesIndex: 3,
               dimension: 3, // 指向第三列（列序号从 0 开始记，所以设置为 2）。
               min: 0, // 需要给出数值范围，最小数值。
-              max: 10000, // 需要给出数值范围，最大数值。
+              max: 4000, // 需要给出数值范围，最大数值。
               inRange: {
                   // 气泡尺寸：5 像素到 60 像素。
-                  symbolSize: [5, 30]
+                  symbolSize: [5, 40]
               }
           },
           {
@@ -155,47 +165,49 @@ export default {
               seriesIndex: 4,
               dimension: 3, // 指向第三列（列序号从 0 开始记，所以设置为 2）。
               min: 0, // 需要给出数值范围，最小数值。
-              max: 3000, // 需要给出数值范围，最大数值。
+              max: 400, // 需要给出数值范围，最大数值。
               inRange: {
                   // 气泡尺寸：5 像素到 60 像素。
-                  symbolSize: [5, 30]
+                  symbolSize: [5, 40]
               }
           },
           {
               show: false,
               seriesIndex: 5,
               dimension: 3, // 指向第三列（列序号从 0 开始记，所以设置为 2）。
-            //   min: 0, // 需要给出数值范围，最小数值。
-            //   max: 10000, // 需要给出数值范围，最大数值。
-            //   inRange: {
-            //       // 气泡尺寸：5 像素到 60 像素。
-            //       symbolSize: [5, 30]
-            //   }
+              min: 0, // 需要给出数值范围，最小数值。
+              max: 5, // 需要给出数值范围，最大数值。
+              inRange: {
+                  // 气泡尺寸：5 像素到 60 像素。
+                  symbolSize: [5, 40]
+              }
           }
           ],
           series: [
              {
               name: '源IP连接数',
-            //   data: data[0],
               data: data.srcIpLink,
               type: 'scatter',
-              symbolSize: function (param) {
-                  let size = (param[3] / interval.srcIpLinkInterval).toFixed();
-                  if (size < 5) {
-                      return 5;
-                  } else if(size > 40) {
-                      return 40;
-                  }
-                  return size;
-              },
+            //   symbolSize: function (param) {
+            //       let size = (param[3] / interval.srcIpLinkInterval).toFixed();
+            //       if (size < 5) {
+            //           return 5;
+            //       } else if(size > 40) {
+            //           return 40;
+            //       }
+            //       return size;
+            //   },
               label: {
                   emphasis: {
                       show: true,
                       itemStyle: {
                         color: 'red'
                       },
+                      textStyle: {
+                          fontSize: '20'
+                      },
                       formatter: function (param) {
-                          return param.data[5] + '：' + param.data[4];
+                          return param.data[2] + '：' + param.data[3];
                       },
                       position: 'top'
                   }
@@ -218,17 +230,16 @@ export default {
           {
             name: '源端口连接数',
             type: 'scatter',
-            // data: data[1],
             data: data.srcPortLink,
-            symbolSize: function (param) {
-                  let size = (param[3] / interval.srcPortLinkInterval).toFixed();
-                  if (size < 5) {
-                      return 5;
-                  } else if(size > 40) {
-                      return 40;
-                  }
-                  return size;
-              },
+            // symbolSize: function (param) {
+            //       let size = (param[3] / interval.srcPortLinkInterval).toFixed();
+            //       if (size < 5) {
+            //           return 5;
+            //       } else if(size > 40) {
+            //           return 40;
+            //       }
+            //       return size;
+            //   },
               label: {
                   emphasis: {
                       show: true,
@@ -238,7 +249,10 @@ export default {
                       formatter: function (param) {
                           return param.data[2] + '：' + param.data[3];
                       },
-                      position: 'top'
+                      position: 'top',
+                      textStyle: {
+                          fontSize: '20'
+                      },
                   }
               },
             itemStyle: {
@@ -260,15 +274,15 @@ export default {
             //   data: data[2],
               data: data.destIpLink,
               type: 'scatter',
-              symbolSize: function (param) {
-                  let size = (param[3] / interval.destIpLinkInterval).toFixed();
-                  if (size < 5) {
-                      return 5;
-                  } else if(size > 40) {
-                      return 40;
-                  }
-                  return size;
-              },
+            //   symbolSize: function (param) {
+            //       let size = (param[3] / interval.destIpLinkInterval).toFixed();
+            //       if (size < 5) {
+            //           return 5;
+            //       } else if(size > 40) {
+            //           return 40;
+            //       }
+            //       return size;
+            //   },
               label: {
                   emphasis: {
                       show: true,
@@ -276,9 +290,12 @@ export default {
                         color: 'pink'
                       },
                       formatter: function (param) {
-                          return param.data[5] + '：' + param.data[4];
+                          return param.data[2] + '：' + param.data[3];
                       },
-                      position: 'top'
+                      position: 'top',
+                      textStyle: {
+                          fontSize: '20'
+                      },
                   }
               },
               itemStyle: {
@@ -317,9 +334,12 @@ export default {
                         color: 'pink'
                       },
                       formatter: function (param) {
-                          return param.data[5] + '：' + param.data[4];
+                          return param.data[2] + '：' + param.data[3];
                       },
-                      position: 'top'
+                      position: 'top',
+                      textStyle: {
+                          fontSize: '20'
+                      },
                   }
               },
             itemStyle: {
@@ -342,15 +362,15 @@ export default {
             //   data: data[4],
               data: data.srcIpActivePort,
               type: 'scatter',
-              symbolSize: function(param) {
-                  let size = (param[3] / interval.srcIpPortInterval).toFixed();
-                  if (size < 5) {
-                      return 5;
-                  } else if(size > 40) {
-                      return 40;
-                  }
-                  return size;
-              },
+            //   symbolSize: function(param) {
+            //       let size = (param[3] / interval.srcIpPortInterval).toFixed();
+            //       if (size < 5) {
+            //           return 5;
+            //       } else if(size > 40) {
+            //           return 40;
+            //       }
+            //       return size;
+            //   },
               label: {
                   emphasis: {
                       show: true,
@@ -358,9 +378,12 @@ export default {
                         color: 'pink'
                       },
                       formatter: function (param) {
-                          return param.data[5] + '：' + param.data[4];
+                          return param.data[2] + '：' + param.data[3];
                       },
-                      position: 'top'
+                      position: 'top',
+                      textStyle: {
+                          fontSize: '20'
+                      },
                   }
               },
               itemStyle: {
@@ -383,15 +406,15 @@ export default {
               type: 'scatter',
             //   data: data[5],
               data: data.destIpActivePort,
-              symbolSize: function (param) {
-                  let size = (param[3] / interval.destIpPortInterval).toFixed();
-                  if (size < 5) {
-                      return 5;
-                  } else if(size > 40) {
-                      return 40;
-                  }
-                  return size;
-                },
+            //   symbolSize: function (param) {
+            //       let size = (param[3] / interval.destIpPortInterval).toFixed();
+            //       if (size < 5) {
+            //           return 5;
+            //       } else if(size > 40) {
+            //           return 40;
+            //       }
+            //       return size;
+            //     },
               label: {
                   emphasis: {
                       show: true,
@@ -399,9 +422,12 @@ export default {
                         color: 'pink'
                       },
                       formatter: function (param) {
-                          return param.data[5] + '：' + param.data[4];
+                          return param.data[2] + '：' + param.data[3];
                       },
-                      position: 'top'
+                      position: 'top',
+                      textStyle: {
+                          fontSize: '20'
+                      },
                   }
               },
               itemStyle: {

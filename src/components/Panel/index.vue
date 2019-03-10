@@ -134,6 +134,13 @@ export default {
         font-weight: 600;
         padding-left: 45px;
         z-index: 10;
+        img {
+            position: absolute;
+            top: 6px;
+            left: 30px;
+            height: 24px;
+            width: 24px;
+        }
     }
 }
 // .panel {

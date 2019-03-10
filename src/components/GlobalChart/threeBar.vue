@@ -33,12 +33,30 @@ export default {
   },
   mounted () {
     this.getBarData();
-    // this.threeBarChart = echarts.init(this.$refs.threeBarChart);
+    this.threeBarChart = echarts.init(this.$refs.threeBarChart);
+  },
+  watch: {
+      legend: {
+        handler(newValue, oldValue) {
+          let flag = false;
+          for (let i = 0; i < newValue.length; i++) {
+　　　　　　　　if (oldValue[i] != newValue[i]) {
+                flag = true;
+                break;
+　　　　　　　　}
+　　　　　　}
+          if (flag) {
+            this.handleControl(this.threeBarChart);
+          }
+        },
+        immediate: true,
+        deep: true
+      }
   },
 
   methods: {
     getBarData() {
-      this.axios.get('/api/getThreeBar').then((res) => {
+      this.axios.get('/api/getThreeBar', {params: {table: 'dw_log_3d_count0406_mins'}}).then((res) => {
         console.log('获取的数据为', res.data);
         this.instances = res.data;
       }).then(() => {
@@ -63,14 +81,13 @@ export default {
             }
           },
           visualMap: {
-              max: 200,
+              max: 180,
               min: 0,
               type: 'piecewise',
               right: 12,
               bottom: 200,
               dimension: 'srcAllBytes',
               inRange: {
-                  // color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
                   color: ['#d94e5d','#eac736','#50a3ba'].reverse(),
               },
               textStyle: {
@@ -86,7 +103,7 @@ export default {
                 textStyle: {
                   color: 'white'
                 },
-                interval: 2,
+                interval: 5,
                 formatter: function (value, index) {
                     // 格式化成月/日，小时:分钟
                     var date = new Date(value);
@@ -99,8 +116,8 @@ export default {
               }
           },
           yAxis3D: {
-              name: '',
               type: 'category',
+              nameGap: 10,
               axisLabel: {
                 show: true,
                 textStyle: {
@@ -200,7 +217,7 @@ export default {
       };
       threeBarChart.setOption(threeBarption);
       // this.threeBarChart.setOption(threeBarption);
-      // this.handleControl(threeBarChart);
+      this.handleControl(threeBarChart);
       // if(this.changeLegendFlag) {
       //   threeBarChart.dispatchAction({
       //       type: 'selectDataRange',
@@ -225,7 +242,7 @@ export default {
           // });
       });
       threeBarChart.on('mouseover', function (parmas) {
-        console.log(parmas);
+        // console.log(parmas);
           // $.get('detail?q=' + params.name, function (detail) {
           //     myChart.setOption({
           //         series: [{
@@ -238,7 +255,6 @@ export default {
       });
     },
     handleControl(chart) {
-      debugger
       if(this.changeLegendFlag) {
         chart.dispatchAction({
             type: 'selectDataRange',

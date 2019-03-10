@@ -1,68 +1,73 @@
 <template>
   <div class="detail-wrap">
+    <div class="control">
+      <Collapse simple>
+        <Panel name="1">
+          控制面板
+          <div slot="content">
+            <Control />
+          </div>
+        </Panel>
+      </Collapse>
+    </div>
     <!-- 时间序列图 -->
     <Row>
-      <Col span="16" style="height: 400px">
-        <panel :width="800" :height="400" titleIcon="ddd">
-          <span slot="header">实时气泡图</span>
+      <Col span="16">
+        <chart-panel :width="1200" :height="600" :titleIcon="lineIcon">
+          <span slot="header">主机流量时序图</span>
           <div slot="body">
             <line-chart />
           </div>
-        </panel>
-        <!-- <div class="chart-wrap">
-          <line-chart />
-        </div> -->
+        </chart-panel>
       </Col>
-      <Col span="8">
-        <panel :width="420" :height="400">
+      <!-- <Col span="8">
+        <panel :width="420" :height="600" :titleIcon="controlIcon">
+          <span slot="header">控制面板</span>
           <div slot="body">
             <Control />
-            <!-- <line-chart /> -->
           </div>
         </panel>
-        <!-- <div class="report-wrap">
-            <Control />
-        </div> -->
-      </Col>
+      </Col> -->
     </Row>
     <!-- 热力图 -->
     <Row>
       <Col span="16">
-        <panel :width="800" :height="440" titleIcon="ddd">
+        <chart-panel :width="800" :height="440" :titleIcon="heatIcon">
           <span slot="header">实时流量图</span>
           <div slot="body">
             <heatmap-chart @transferReport="transferReport"></heatmap-chart>
           </div>
-        </panel>
+        </chart-panel>
         <!-- <div class="chart-wrap">
           <heatmap-chart @transferReport="transferReport"></heatmap-chart>
         </div> -->
       </Col>
       <Col span="8">
-        <heatmap-table :heatSrcIpData="heatSrcIpData"
+          <heatmap-table :reportData="reportData"></heatmap-table>
+        <!-- <heatmap-table :heatSrcIpData="heatSrcIpData"
           :heatDestIpData="heatDestIpData"
           :heatSrcPortData="heatSrcPortData"
-          :heatDestPortData="heatDestPortData"/>
+          :heatDestPortData="heatDestPortData"/> -->
       </Col>
     </Row>
     <!-- 气泡图 -->
     <Row>
-      <Col span="16">
-        <panel :width="800" :height="400" titleIcon="ddd">
+      <Col span="24">
+        <chart-panel :width="1200" :height="540" :titleIcon="bubbleIcon">
           <span slot="header">实时气泡图</span>
           <div slot="body">
             <bubble :instances="instances" :intervalFlag="intervalFlag"></bubble>
           </div>
-        </panel>
+        </chart-panel>
         <!-- <div class="chart-wrap">
           <bubble :instances="instances" :intervalFlag="intervalFlag"></bubble>
         </div> -->
       </Col>
-      <Col span="8">
+      <!-- <Col span="8">
         <div class="report-wrap">
           这里是气泡图的数据
         </div>
-      </Col>
+      </Col> -->
     </Row>
   </div>
 </template>
@@ -73,8 +78,8 @@ import ParallelChart from '../ParallelChart'
 import SunburstChart from '../SunburstChart'
 import Bubble from './Bubble'
 import Control from './control.vue'
-import LineChart from './Line'
-import Panel from '@/components/Panel'
+import LineChart from './Line_0402'
+import ChartPanel from '@/components/Panel'
 
 export default {
   name: 'detail-page',
@@ -138,7 +143,11 @@ export default {
             title: 'Name',
             key: 'srcAllBytes'
         },
-      ]
+      ],
+      heatIcon: require('../../assets/img/chart.png'),
+      bubbleIcon: require('../../assets/img/bubble.png'),
+      lineIcon: require('../../assets/img/line.png'),
+      controlIcon: require('../../assets/img/parallel-color.png')
     };
   },
   components: {
@@ -149,15 +158,16 @@ export default {
     Control,
     Bubble,
     LineChart,
-    Panel
+    ChartPanel
   },
   created() {
-    this.getBubbleSrcIpLink();
-    this.getBubbleSrcPortLink();
-    this.getBubbleDestIpLink();
-    this.getBubbleDestPortLink();
-    this.getBubbleSrcIpActivePort();
-    this.getBubbleDestIpActivePort();
+    // this.getBubbleSrcIpLink();
+    // this.getBubbleSrcPortLink();
+    // this.getBubbleDestIpLink();
+    // this.getBubbleDestPortLink();
+    // this.getBubbleSrcIpActivePort();
+    // this.getBubbleDestIpActivePort();
+    this.getBubble();
   },
   methods: {
     transferReport(val) {
@@ -181,6 +191,78 @@ export default {
                 return 0;
             }
         }
+    },
+    getBubble() {
+      this.axios.get('/api/getBubble').then((res) => {
+        let bubbleData = res.data;
+        bubbleData.forEach((item, index) => {
+          // 源IP连接数
+          let srcIpLinkItem = Object.assign({},
+            {totalItem: item.srcIpLink},
+            {dimension: item.srcIp},
+            {yAxis: 1},
+            {xAxis: index + 1}
+          );
+          this.heatSrcIpLinkData.push(Object.values(srcIpLinkItem).reverse());
+
+          // 源端口连接数
+          let srcPortLinkItem = Object.assign({},
+            {totalItem: item.srcPortLink},
+            {dimension: item.srcPort},
+            {yAxis: 2},
+            {xAxis: index + 1}
+          );
+          this.heatSrcPortLinkData.push(Object.values(srcPortLinkItem).reverse());
+
+          // 目的IP连接数
+          let destIpLinkItem = Object.assign({},
+            {totalItem: item.destIpLink},
+            {dimension: item.destIp},
+            {yAxis: 3},
+            {xAxis: index + 1}
+          );
+          this.heatDestIpLinkData.push(Object.values(destIpLinkItem).reverse());
+
+          // 目的端口连接数
+          let destPortLinkItem = Object.assign({},
+            {totalItem: item.destPortLink},
+            {dimension: item.destPort},
+            {yAxis: 4},
+            {xAxis: index + 1}
+          );
+          this.heatDestPortLinkData.push(Object.values(destPortLinkItem).reverse());
+
+          // 源IP活跃端口数
+          let srcIpPortCounttem = Object.assign({},
+            {totalItem: item.srcActivePortCount},
+            {dimension: item.srcIpActive},
+            {yAxis: 5},
+            {xAxis: index + 1}
+          );
+          this.heatSrcIpActivePortData.push(Object.values(srcIpPortCounttem).reverse());
+
+          // 目的IP活跃端口数
+          let destIpPortCounttem = Object.assign({},
+            {totalItem: item.destActivePortCount},
+            {dimension: item.destIpActive},
+            {yAxis: 6},
+            {xAxis: index + 1}
+          );
+          this.heatDestIpActivePortData.push(Object.values(destIpPortCounttem).reverse());
+        });
+        this.instances = Object.assign(this.instances,
+          {srcIpLink: this.heatSrcIpLinkData},
+          {srcPortLink: this.heatSrcPortLinkData},
+          {destIpLink: this.heatDestIpLinkData},
+          {destPortLink: this.heatDestPortLinkData},
+          {srcIpActivePort: this.heatSrcIpActivePortData},
+          {destIpActivePort: this.heatDestIpActivePortData}
+        );
+
+        // 气泡图大小间隔自动调节
+        // let interval = (bubbleData[0].totalItem / 40).toFixed();
+        // this.intervalFlag = Object.assign({}, this.intervalFlag, {srcIpLinkInterval: interval});
+      })
     },
     getBubbleSrcIpLink() {
       this.axios.get('/api/getBubbleSrcIpLink',
@@ -362,6 +444,34 @@ export default {
       float: right;
       width: 32%;
     }
+  }
+  .control {
+    position: fixed;
+    top: 60px;
+    z-index: 999;
+    background-color: #404973;
+    opacity: 0.8;
+    line-height: 35px;
+    font-size: 14px;
+    color: #fff;
+    right: 60px;
+    padding: 5px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .ivu-select-dropdown {
+    color: black;
+  }
+  .ivu-collapse {
+    background: none !important;
+    border: none;
+  }
+  .ivu-collapse>.ivu-collapse-item>.ivu-collapse-header {
+    color: white;
+  }
+  .ivu-collapse-content {
+    color: white;
+    background: none !important;
   }
 }
 </style>

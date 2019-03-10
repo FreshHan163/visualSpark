@@ -24,41 +24,22 @@ export default {
   props: ['legend', 'changeLegendFlag'],
   data () {
     return {
-      instances: [],
       timeData: [],
       tcpInstances: [],
       udpInstances: [],
       otherInstances: [],
-      srcIpData: [],
-      srcPortData: [],
-      destIpData: [],
-      destPortData: [],
-      bytesData: [],
-      countData: [],
-      pktsData: []
+      paraData: [],
     };
   },
   mounted () {
-      this.getParaSrcIp().then(() => {
-        this.getParaSrcPort();
-      }).then(() => {
-        this.getParaDestIp().then(() => {
-          this.getParaDestPort();
-        }).then(() => {
-          this.getParaTotalCount();
-        }).then(() => {
-          this.getParaTotalBytes();
-        }).then(() => {
-          this.getParaTotalPackets();
-        });
-      });
+    this.getPara();
     this.handleData();
   },
   methods: {
     handleData() {
         setTimeout(() => {
-          console.log('绘制平行坐标图');
-          this.srcIpData.forEach((item, index) => {
+          console.log('绘制平行坐标图 paraData = ', this.paraData);
+          this.paraData.forEach((item, index) => {
             switch (item[1]) {
               case '172.10':
                 item.splice(1, 1);
@@ -76,6 +57,9 @@ export default {
                 break;
             }
           });
+          // console.log('平行坐标图数据: ', this.tcpInstances);
+          // console.log('平行坐标图数据: ', this.udpInstances);
+          // console.log('平行坐标图数据: ', this.otherInstances);
           this.drawChallParallel();
         }, 3000);
     },
@@ -87,61 +71,13 @@ export default {
         });
       }
     },
-    getParaSrcIp() {
-      return this.axios.get('/api/getSrcIpEntropyHours').then((res) => {
+    getPara() {
+      return this.axios.get('/api/getPara', {params: {table: 'dw_para_0406_mins'}}).then((res) => {
         res.data.forEach((item, index) => {
-            this.srcIpData.push(Object.values(item));
-            this.timeData.push(item.hours);
+          this.paraData.push(Object.values(item));
+          this.timeData.push(item.mins);
         });
-      });
-    },
-    getParaSrcPort() {
-      return this.axios.get('/api/getSrcPortEntropyHours').then((res) => {
-        res.data.forEach((item, index) => {
-          this.srcPortData.push(Object.values(item));
-          this.srcIpData[index].push(item.srcPortEntropyTotal);
-        });
-      });
-    },
-    getParaDestIp() {
-      return this.axios.get('/api/getDestIpEntropyHours').then((res) => {
-        res.data.forEach((item, index) => {
-          this.destIpData.push(Object.values(item));
-          this.srcIpData[index].push(item.destIpEntropyTotal);
-        });
-      });
-    },
-    getParaDestPort() {
-      return this.axios.get('/api/getDestPortEntropyHours').then((res) => {
-        res.data.forEach((item, index) => {
-          this.destPortData.push(Object.values(item));
-          this.srcIpData[index].push(item.destPortEntropyTotal);
-        });
-      });
-    },
-    getParaTotalCount() {
-      return this.axios.get('/api/getParaTotalCount').then((res) => {
-        res.data.forEach((item, index) => {
-          this.countData.push(Object.values(item));
-          this.srcIpData[index].push(item.count);
-        });
-      });
-    },
-    getParaTotalBytes() {
-      return this.axios.get('/api/getParaTotalBytes').then((res) => {
-        res.data.forEach((item, index) => {
-          this.bytesData.push(Object.values(item));
-          this.srcIpData[index].push(item.bytes);
-        });
-      });
-    },
-    getParaTotalPackets() {
-      return this.axios.get('/api/getParaTotalPackets').then((res) => {
-        res.data.forEach((item, index) => {
-          this.pktsData.push(Object.values(item));
-          this.srcIpData[index].push(item.pkts);
-        });
-      });
+      })
     },
     drawChallParallel() {
       let parallelChart = this.$echarts.init(document.getElementById('parallelChart'));
@@ -153,8 +89,8 @@ export default {
         {name: '目的IP熵', index: 3, text: '目的IP熵'},
         {name: '目的端口熵', index: 4, text: ' 目的端口熵'},
         {name: '连接数', index: 5, text: ' 连接数'},
-        {name: '字节数', index: 6, text: ' 字节数'},
-        {name: '包数', index: 7, text: ' 包数'},
+        {name: '包数', index: 6, text: ' 包数'},
+        {name: '字节数', index: 7, text: ' 字节数'},
     ];
 
     var lineStyle = {
@@ -182,30 +118,23 @@ export default {
               data: this.timeData,
               axisTick: {
                 inside: true,
-                interval: 12,
                 margin: -50,
-                // interval: function (value, index) {
-                //   var date = new Date(value);
-                //     var days = [(date.getMonth() + 1), date.getDate()];
-                //     var hours = date.getHours();
-                //     if (hours === 0 || days[0] === 1 || days[0] === 2) {
-                //       return true;
-                //     }
-                //     return false;
-                // },
                 length: 10
               },
               axisLabel: {
-                  interval: 12,
+                  interval: 22,
                   formatter: function(value, index) {
                     var date = new Date(value);
                     var days = [(date.getMonth() + 1), date.getDate()];
                     var hours = [date.getHours(), date.getMinutes()];
+                    if (hours[0].length === 1) {
+                        hours[0] = `0${hours[0]}`;
+                    }
+                    if (hours[1] === 0) {
+                        hours[1] = '00';
+                    }
                     var texts = '';
-                    // if (hours[0] === 0 || hours[0] === 12 || days[1] === 1 & hours[0] === 15 || days[1] === 2 & hours[0] === 13) {
-                    //   texts = days.join('/') + ' ' + hours.join(':') + '0';
-                    // }
-                      texts = days.join('/') + ' ' + hours.join(':') + '0';
+                      texts = days.join('/') + ' ' + hours.join(':');
                     return texts;
                   },
                   textStyle: {
@@ -231,7 +160,6 @@ export default {
             type: 'piecewise',
             inRange: {
                 color: ['#d94e5d','#eac736','#50a3ba'].reverse(),
-                // colorAlpha: [0, 1]
             },
             textStyle: {
               color: 'white'
@@ -244,11 +172,11 @@ export default {
             width: 1000,
             parallelAxisDefault: {
                 type: 'value',
-                // name: 'AQI指数',
                 silent: 'true',
                 triggerEvent: 'true',
                 nameLocation: 'end',
                 nameGap: 20,
+                interval: 50,
                 nameTextStyle: {
                     color: '#fff',
                     fontSize: 12
@@ -278,17 +206,20 @@ export default {
                 name: '172.10',
                 type: 'parallel',
                 lineStyle: lineStyle,
+                smooth: true,
                 data: this.tcpInstances
             },
             {
                 name: '172.20',
                 type: 'parallel',
+                smooth: true,
                 lineStyle: lineStyle,
                 data: this.udpInstances
             },
             {
                 name: '172.30',
                 type: 'parallel',
+                smooth: true,
                 lineStyle: lineStyle,
                 data: this.otherInstances
             }

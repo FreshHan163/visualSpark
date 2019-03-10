@@ -8,10 +8,16 @@
       <div class="info-bb fl">IPS</div>
       <div class="info-cpu fl">CPU</div>
     </div> -->
-    <!-- <div class="control">
-      自定义配置图表选项
-      <Control @chooseLegend="chooseLegend"/>
-    </div> -->
+    <div class="control">
+      <Collapse simple>
+        <Panel name="1">
+          自定义配置
+          <div slot="content">
+            <Control @chooseLegend="chooseLegend"/>
+          </div>
+        </Panel>
+      </Collapse>
+    </div>
     <div class="home-body">
       <!-- <div class="left">
         <panel :width="400" :height="400" titleIcon="ddd">
@@ -22,30 +28,30 @@
         </panel>
       </div> -->
       <div class="middle">
-        <panel :width="1200" :height="500" titleIcon="ddd">
+        <chart-panel :width="1200" :height="500" :titleIcon="threeIcon">
           <span slot="header">实时流量图</span>
           <div slot="body">
             <ThreeBar :legend="threeLegendData" :changeLegendFlag="changeLegendFlag"/>
           </div>
-        </panel>
-        <panel :width="1200" :height="500" titleIcon="ddd">
+        </chart-panel>
+        <chart-panel :width="1200" :height="500" :titleIcon="parallelIcon">
           <span slot="header">平行坐标图</span>
           <div slot="body">
             <Parallel :legend="paraLegendData" :changeLegendFlag="changeLegendFlag"/>
           </div>
-        </panel>
+        </chart-panel>
       </div>
       <!-- <div class="right">
-        <panel :width="200" :height="400" titleIcon="ddd">
+        <chart-panel :width="200" :height="400" titleIcon="ddd">
           <span slot="header">panel 顶部</span>
-        </panel>
+        </chart-panel>
       </div> -->
     </div>
   </div>
 </template>
 
 <script>
-import Panel from '@/components/Panel'
+import ChartPanel from '@/components/Panel'
 import Rectangle from '@/components/Panel/Rectangle'
 import ThreeBar from '@/components/GlobalChart/threeBar'
 import Parallel from '@/components/GlobalChart/ParallelChart'
@@ -59,6 +65,7 @@ export default {
       threeLegendData: [],
       paraLegendData: [],
       changeLegendFlag: false,
+      controlNumber: '1',
       ipsData: [
         {
           leftIcon: '',
@@ -74,11 +81,13 @@ export default {
           title: 'ips告警日志',
           num: '333'
         }
-      ]
+      ],
+      threeIcon: require('../../assets/img/three-color.png'),
+      parallelIcon: require('../../assets/img/parallel.png'),
     };
   },
   components: {
-    Panel,
+    ChartPanel,
     Rectangle,
     ThreeBar,
     Parallel,
@@ -93,33 +102,32 @@ export default {
           parallelLegend = [];
       legendData.map((item) => {
         switch(item) {
-          case '一级':
+          case '1':
             threeLegend.push('0-40');
             parallelLegend.push('0.0-0.2');
             break;
-          case '二级':
+          case '2':
             threeLegend.push('40-80');
             parallelLegend.push('0.2-0.4');
             break;
-          case '三级':
+          case '3':
             threeLegend.push('80-120');
             parallelLegend.push('0.4-0.6');
             break;
-          case '四级':
+          case '4':
             threeLegend.push('120-160');
             parallelLegend.push('0.6-0.8');
             break;
-          case '五级':
+          case '5':
             threeLegend.push('160-200');
             parallelLegend.push('0.8-1.0');
             break;
           default:
-            breka;
+            break;
         }
       });
       this.threeLegendData = threeLegend;
       this.paraLegendData = parallelLegend;
-      debugger
       this.changeLegendFlag = true;
     }
   }
@@ -151,14 +159,14 @@ export default {
     }
   }
   .control {
-    // width: 100px;
-    background-color: #2C58A6;
+    position: fixed;
+    top: 60px;
+    z-index: 999;
+    background-color: #404973;
+    opacity: 0.8;
     line-height: 35px;
     font-size: 14px;
     color: #fff;
-    position: fixed;
-    top: 90px;
-    z-index: 999;
     right: 60px;
     padding: 5px 20px;
     cursor: pointer;
@@ -179,6 +187,20 @@ export default {
       flex: 1;
       padding-bottom: 100px;
     }
+  }
+  .ivu-select-dropdown {
+    color: black;
+  }
+  .ivu-collapse {
+    background: none !important;
+    border: none;
+  }
+  .ivu-collapse>.ivu-collapse-item>.ivu-collapse-header {
+    color: white;
+  }
+  .ivu-collapse-content {
+    color: white;
+    background: none !important;
   }
 }
 </style>

@@ -3,7 +3,57 @@
 var sqlNewChart = {
     // 用户
     chart: {
-        getThreeBarDay: 'select * from dw_log_3d_count0410',
+        getThreeBarDay: 'select * from ??',
+        getPara: `SELECT
+        mins,
+        countServer,
+        (srcIpEntropy / t1.siTotal) AS srcIpEntropyTotal,
+        (srcPortEntropy / t1.spTotal) AS srcPortEntropyTotal,
+        (destIpEntropy / t1.diTotal) AS destIpEntropyTotal,
+        (destPortEntropy / t1.dpTotal) AS destPortEntropyTotal,
+        (linkCount / t1.linkTotal) AS count,
+        (pktCount / t1.pktTotal) AS pkts,
+        (totalBytes / t1.byteTotal) AS bytes
+      FROM
+        ??,
+        (SELECT
+          MAX(destPortEntropy) AS dpTotal,
+          MAX(destIpEntropy) AS diTotal,
+          MAX(srcIpEntropy) AS siTotal,
+          MAX(srcPortEntropy) AS spTotal,
+          MAX(linkCount) AS linkTotal,
+          MAX(pktCount) AS pktTotal,
+          MAX(totalBytes) AS byteTotal
+        FROM
+        ??
+        ) AS t1`,
+        getHeat: `
+          SELECT
+            *
+          FROM
+            dw_heat_0406_1120`,
+        getBubble: `
+        SELECT
+            *
+          FROM
+            dw_bubble_0406_1120
+        `,
+        getIp: `
+        SELECT
+          mins, IF(bytes is NULL, 0, bytes) AS bytes
+        FROM
+          dw_mins
+          LEFT JOIN
+          (SELECT
+            mins AS hours, SUM(totalBytes) AS bytes
+          FROM
+            ??
+          GROUP BY
+            hours
+          ) AS t2
+          ON dw_mins.mins = t2.hours
+        ORDER BY
+          mins`,
         queryDestPortEntropy: `
         SELECT
           hours,
@@ -58,9 +108,9 @@ var sqlNewChart = {
       SELECT
         *
       FROM
-        dw_heat_srcIp0410
+        dw_heat_srcIp0405
       WHERE
-        hours = ?
+      mins = ?
       ORDER By
         srcBytes
       DESC
@@ -69,9 +119,9 @@ var sqlNewChart = {
       SELECT
         *
       FROM
-        dw_heat_srcPort0410
+        dw_heat_srcPort0405
       WHERE
-        hours = ?
+      mins = ?
       ORDER By
         srcBytes
       DESC
@@ -80,9 +130,9 @@ var sqlNewChart = {
       SELECT
         *
       FROM
-        dw_heat_destIp0410
+        dw_heat_destIp0405
       WHERE
-        hours = ?
+      mins = ?
       ORDER By
         destBytes
       DESC
@@ -91,9 +141,9 @@ var sqlNewChart = {
     SELECT
       *
     FROM
-      dw_heat_destPort0410
+      dw_heat_destPort0405
     WHERE
-      hours = ?
+      mins = ?
     ORDER By
       destBytes
     DESC

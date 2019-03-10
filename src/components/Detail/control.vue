@@ -19,14 +19,14 @@
                 </Col>
             </Row>
         </FormItem> -->
-        <FormItem label="主机" prop="ips">
+        <FormItem label="源IP" prop="ips">
             <Select v-model="formControl.ips">
                 <Option v-for="(item, index) in ipList" :key="index" :value="item.value">
                     {{item.value}}
                 </Option>
             </Select>
         </FormItem>
-        <FormItem label="端口" prop="ports">
+        <FormItem label="目的IP" prop="ports">
             <Select v-model="formControl.ports">
                 <Option v-for="(item, index) in portList" :key="index" :value="item.value">
                     {{item.value}}
@@ -67,7 +67,7 @@ export default {
             formDate: '',
             portList: [
                 {
-                    value: '8801'
+                    value: '10.0.0.12'
                 },
                 {
                     value: '1001'
@@ -83,7 +83,7 @@ export default {
             ],
             ruleValidate: {
                 ips: [
-                    { required: true, message: 'IP不能为空', trigger: 'blur' }
+                    { required: false, message: 'IP不能为空', trigger: 'blur' }
                 ],
                 ports: [
                     { required: false, message: '端口号不能为空', trigger: 'blur' }
@@ -136,5 +136,8 @@ export default {
 <style lang="less">
 .control-wrap {
     padding: 40px 20px;
+    .ivu-form-item-label {
+        color: white !important;
+    }
 }
 </style>

@@ -24,7 +24,7 @@ var jsonWrite = function(res, ret) {
 router.get('/getThreeBar', (req, res) => {
     var sql = $sql.chart.getThreeBarDay;
     var query = req.query;
-    conn.query(sql, [query.ips, query.hours], function(err, result) {
+    conn.query(sql, [query.table], function(err, result) {
       if (err) {
         console.log(err);
       }
@@ -32,6 +32,62 @@ router.get('/getThreeBar', (req, res) => {
         jsonWrite(res, result);
       }
     });
+});
+
+// 获取平行坐标数据
+router.get('/getPara', (req, res) => {
+  var sql = $sql.chart.getPara;
+  var query = req.query;
+  conn.query(sql, [query.table, query.table], function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+
+// 获取热力图数据
+router.get('/getHeat', (req, res) => {
+  var sql = $sql.chart.getHeat;
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+
+// 获取气泡图数据
+router.get('/getBubble', (req, res) => {
+  var sql = $sql.chart.getBubble;
+  conn.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
+});
+
+// 获取折线图数据
+router.get('/getIp', (req, res) => {
+  var sql = $sql.chart.getIp;
+  var query = req.query;
+  let ipTable = `dw_line_${query.ip}`;
+  console.log('ipTable = ', ipTable);
+  conn.query(sql, ipTable, function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      jsonWrite(res, result);
+    }
+  });
 });
 
 // 平行坐标数据--destPort
@@ -116,7 +172,7 @@ router.get('/getParaTotalPackets', (req, res) => {
 router.get('/getHeatSrcIp', (req, res) => {
   var sql = $sql.chart.queryHeatSrcIp;
   var query = req.query;
-  conn.query(sql, [query.hours], function(err, result) {
+  conn.query(sql, [query.mins], function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -128,7 +184,7 @@ router.get('/getHeatSrcIp', (req, res) => {
 router.get('/getHeatSrcPort', (req, res) => {
   var sql = $sql.chart.queryHeatSrcPort;
   var query = req.query;
-  conn.query(sql, [query.hours], function(err, result) {
+  conn.query(sql, [query.mins], function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -141,7 +197,7 @@ router.get('/getHeatDestIp', (req, res) => {
   var sql = $sql.chart.queryHeatDestIp;
   var query = req.query;
   console.log('query = ', query.hours);
-  conn.query(sql, [query.hours], function(err, result) {
+  conn.query(sql, [query.mins], function(err, result) {
     if (err) {
       console.log(err);
     }
@@ -153,7 +209,7 @@ router.get('/getHeatDestIp', (req, res) => {
 router.get('/getHeatDestPort', (req, res) => {
   var sql = $sql.chart.queryHeatDestPort;
   var query = req.query;
-  conn.query(sql, [query.hours], function(err, result) {
+  conn.query(sql, [query.mins], function(err, result) {
     if (err) {
       console.log(err);
     }

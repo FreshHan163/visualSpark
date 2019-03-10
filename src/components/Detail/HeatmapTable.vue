@@ -1,6 +1,6 @@
 <template>
   <div class="heat-map-table">
-    <panel :width="420" :height="440" titleIcon="ddd">
+    <panel :width="420" :height="440" :titleIcon="tableIcon">
         <span slot="header">矩阵流量表</span>
         <div slot="body">
         <div class="rank-row">
@@ -13,7 +13,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="(item, index) in heatSrcIpData" :key="index">
+                <tr v-for="(item, index) in reportData" :key="index">
                     <td>{{item.srcIp}}</td>
                     <td>{{item.srcBytes}}</td>
                 </tr>
@@ -29,9 +29,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="(item, index) in heatDestIpData" :key="index">
+                <tr v-for="(item, index) in reportData" :key="index">
                     <td>{{item.destIp}}</td>
-                    <td>{{item.destBytes}}</td>
+                    <td>{{item.destIpBytes}}</td>
                 </tr>
                 </tbody>
             </table>
@@ -47,9 +47,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="(item, index) in heatSrcPortData" :key="index">
+                <tr v-for="(item, index) in reportData" :key="index">
                     <td>{{item.srcPort}}</td>
-                    <td>{{item.srcBytes}}</td>
+                    <td>{{item.srcPortBytes}}</td>
                 </tr>
                 </tbody>
             </table>
@@ -63,9 +63,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="(item, index) in heatDestPortData" :key="index">
+                <tr v-for="(item, index) in reportData" :key="index">
                     <td>{{item.destPort}}</td>
-                    <td>{{item.destBytes}}</td>
+                    <td>{{item.destPortBytes}}</td>
                 </tr>
                 </tbody>
             </table>
@@ -107,7 +107,13 @@
 import Panel from '@/components/Panel'
 export default {
   name: 'HeatmapTable',
-  props: ['heatSrcIpData', 'heatDestIpData', 'heatSrcPortData', 'heatDestPortData'],
+  // props: ['heatSrcIpData', 'heatDestIpData', 'heatSrcPortData', 'heatDestPortData'],
+  props: ['reportData'],
+  data() {
+    return {
+      tableIcon: require('../../assets/img/parallel.png'),
+    }
+  },
   components: {
     Panel
   }

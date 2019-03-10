@@ -1,40 +1,48 @@
 <template>
   <div class="control-wrap">
     <Form :model="formControl" :label-width="60" ref="formControl" :rules="ruleValidate">
-        <FormItem label="级联选择器">
+        <FormItem label="流量级别">
             <CheckboxGroup v-model="formControl.legend" @on-change="hanldeLegend">
-                    <Checkbox label="一级">
-                        <Icon type="logo-twitter"></Icon>
-                        <span>一级</span>
+                    <Checkbox label="1">
+                        <span class="first-class"></span>
                     </Checkbox>
-                    <Checkbox label="二级">
-                        <Icon type="logo-facebook"></Icon>
-                        <span>二级</span>
+                    <Checkbox label="2" >
+                        <span class="sec-class"></span>
                     </Checkbox>
-                    <Checkbox label="三级">
-                        <Icon type="logo-github"></Icon>
-                        <span>三级</span>
+                    <Checkbox label="3">
+                        <span class="third-class"></span>
                     </Checkbox>
-                    <Checkbox label="四级">
-                        <Icon type="logo-snapchat"></Icon>
-                        <span>四级</span>
+                    <Checkbox label="4" >
+                        <span class="four-class"></span>
                     </Checkbox>
-                    <Checkbox label="五级">
-                        <Icon type="logo-snapchat"></Icon>
-                        <span>五级</span>
+                    <Checkbox label="5">
+                        <span class="five-class"></span>
                     </Checkbox>
             </CheckboxGroup>
         </FormItem>
-        <FormItem label="日期" prop="date">
+        <FormItem label="起始日期" prop="startDate">
             <Row>
                 <Col span="11">
                     <DatePicker type="date" placeholder="Select date"
-                        v-model="formControl.date"
+                        v-model="formControl.startDate.date"
                         @on-change="handleDate"></DatePicker>
                 </Col>
                 <Col span="2" style="text-align: center">-</Col>
                 <Col span="11">
-                    <TimePicker type="time" placeholder="Select time" v-model="formControl.time"></TimePicker>
+                    <TimePicker type="time" placeholder="Select time" v-model="formControl.startDate.time"></TimePicker>
+                </Col>
+            </Row>
+        </FormItem>
+        <FormItem label="终止日期" prop="endDate">
+            <Row>
+                <Col span="11">
+                    <DatePicker type="date" placeholder="Select date"
+                        v-model="formControl.endDate.date"
+                        @on-change="handleDate"></DatePicker>
+                </Col>
+                <Col span="2" style="text-align: center">-</Col>
+                <Col span="11">
+                    <TimePicker type="time" placeholder="Select time" v-model="formControl.endDate.time"></TimePicker>
                 </Col>
             </Row>
         </FormItem>
@@ -55,13 +63,21 @@ export default {
                 ports: 'ports',
                 date: '',
                 time: '',
-                legend: ['一级', '二级', '三级', '四级', '五级']
+                legend: ['1', '2', '3', '4', '5'],
+                startDate: {
+                    date: '',
+                    time: ''
+                },
+                endDate: {
+                    date: '',
+                    time: ''
+                },
             },
-            preLegend: ['一级', '二级', '三级', '四级', '五级'],
+            preLegend: ['1', '2', '3', '4', '5'],
             formDate: '',
             portList: [
                 {
-                    value: '8801'
+                    value: '10.0.0.12'
                 },
                 {
                     value: '1001'
@@ -88,9 +104,8 @@ export default {
     methods: {
         hanldeLegend() {
             if(this.preLegend !== this.legend) {
-                this.$emit('chooseLegend', this.formControl.legend);
+                this.$emit('chooseLegend', this.formControl.legend.sort());
                 this.preLegend = this.formControl.legend;
-                console.log('现在的Legend = ', this.formControl.legend);
             }
         },
         handleDate(date) {
@@ -130,6 +145,38 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less">
 .control-wrap {
-    padding: 40px 20px;
+    padding: 8px 2px;
+    [class$='-class'] {
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+        border-radius: 4px;
+        vertical-align: middle;
+        opacity: 0.5;
+    }
+    .first-class {
+        background-color: #db4c5b;
+    }
+    .sec-class {
+        background-color: #e48b42;
+    }
+    .third-class {
+        background-color: #ebc81c;
+    }
+    .four-class {
+        background-color: #9cb675;
+    }
+    .five-class {
+        background-color: #4ca3bb;
+    }
+    .ivu-checkbox-checked + [class$='-class']{
+        opacity: 1;
+    }
+    .ivu-form .ivu-form-item-label {
+        color: white;
+    }
+    .ivu-checkbox-inner {
+        // display: none;
+    }
 }
 </style>
